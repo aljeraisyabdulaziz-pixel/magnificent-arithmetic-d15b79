@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#080b14" />
+<title>حاسبة كينغ شوت</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <button class="backbtn" id="backBtn" aria-label="back">→</button>
+    <div class="logo"><img src="icon.svg" alt="K" /></div>
+    <div class="brand"><span class="name" id="brandName">حاسبة كينغ شوت</span><small id="brandSub">أدوات اللاعب الكاملة</small></div>
+    <button class="langbtn" id="langBtn">EN</button>
+  </header>
+
+  <!-- HOME -->
+  <div class="view active" id="home">
+    <div class="install" id="installBar">
+      <span id="installTxt">ثبّت التطبيق على جهازك</span>
+      <button id="installBtn">تثبيت</button>
+    </div>
+    <div id="homeContent"></div>
+    <footer id="footer"></footer>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="view" id="calc">
+    <div class="calc-head"><div class="chip" id="calcChip"></div><div><h2 id="calcTitle"></h2><p id="calcDesc"></p></div></div>
+    <div class="panel" id="calcInputs"></div>
+    <div class="results" id="calcResults"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="data2.js"></script>
+<script src="data3.js"></script>
+<script src="data4.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
