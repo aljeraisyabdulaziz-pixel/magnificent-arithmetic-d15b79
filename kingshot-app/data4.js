@@ -1,0 +1,46 @@
+/* بيانات مباني الذهب الخالص — أرقام حقائق عن اللعبة. تعرّف window.KS4.
+   الذهب الخالص في اللعبة يتوقف عند TG5 (max truegold = 5). */
+window.KS4 = (function () {
+  "use strict";
+var fi ={wood:67e6,bread:67e6,stone:13e6,iron:33e5};
+var mi ={wood:72e6,bread:72e6,stone:14e6,iron:36e5};
+var pi ={wood:79e6,bread:79e6,stone:15e6,iron:39e5};
+var hi ={wood:82e6,bread:82e6,stone:16e6,iron:41e5};
+var gi ={wood:84e6,bread:84e6,stone:16e6,iron:42e5};
+var vi ={wood:13e6,bread:13e6,stone:27e5,iron:67e4};
+var _i ={wood:14e6,bread:14e6,stone:29e5,iron:72e4};
+var yi ={wood:15e6,bread:15e6,stone:31e5,iron:79e4};
+var xi ={wood:16e6,bread:16e6,stone:32e5,iron:82e4};
+var bi ={wood:16e6,bread:16e6,stone:33e5,iron:84e4};
+var wi ={wood:23e6,bread:23e6,stone:47e5,iron:11e5};
+var Si ={wood:25e6,bread:25e6,stone:5e6,iron:12e5};
+var Ci ={wood:27e6,bread:27e6,stone:55e5,iron:13e5};
+var Ti ={wood:28e6,bread:28e6,stone:57e5,iron:14e5};
+var Ii ={wood:29e6,bread:29e6,stone:59e5,iron:14e5};
+var Ei ={wood:2e7,bread:2e7,stone:4e6,iron:1e6};
+var Ni ={wood:21e6,bread:21e6,stone:43e5,iron:1e6};
+var Ai ={wood:23e6,bread:23e6,stone:47e5,iron:11e5};
+var Li ={wood:24e6,bread:24e6,stone:49e5,iron:12e5};
+var Mi ={wood:25e6,bread:25e6,stone:5e6,iron:12e5};
+var Ri ={wood:36e6,bread:36e6,stone:72e5,iron:18e5};
+var ki ={wood:39e6,bread:39e6,stone:79e5,iron:19e5};
+var Pi ={wood:41e6,bread:41e6,stone:82e5,iron:2e6};
+var Di ={wood:42e6,bread:42e6,stone:82e5,iron:21e5};
+var Vn =574e3/10;
+var Ho =632e3/10;
+var Xi =1810500-Vn*5;
+var Gx =[{name:"Base",cost:0,power:Xi},{name:"30-1",cost:132,power:Xi+Vn*1,resources:fi},{name:"30-2",cost:132,power:Xi+Vn*2,resources:fi},{name:"30-3",cost:132,power:Xi+Vn*3,resources:fi},{name:"30-4",cost:132,power:Xi+Vn*4,resources:fi},{name:"TG 1",cost:132,power:1810500,resources:fi},{name:"TG1-1",cost:158,power:1810500+Vn*1,resources:mi},{name:"TG1-2",cost:158,power:1810500+Vn*2,resources:mi},{name:"TG1-3",cost:158,power:1810500+Vn*3,resources:mi},{name:"TG1-4",cost:158,power:1810500+Vn*4,resources:mi},{name:"TG 2",cost:158,power:2097500,resources:mi},{name:"TG2-1",cost:238,power:2097500+Vn*1,resources:pi},{name:"TG2-2",cost:238,power:2097500+Vn*2,resources:pi},{name:"TG2-3",cost:238,power:2097500+Vn*3,resources:pi},{name:"TG2-4",cost:238,power:2097500+Vn*4,resources:pi},{name:"TG 3",cost:238,power:2384500,resources:pi},{name:"TG3-1",cost:280,power:2384500+Ho*1,resources:hi},{name:"TG3-2",cost:280,power:2384500+Ho*2,resources:hi},{name:"TG3-3",cost:280,power:2384500+Ho*3,resources:hi},{name:"TG3-4",cost:280,power:2384500+Ho*4,resources:hi},{name:"TG 4",cost:280,power:2700500,resources:hi},{name:"TG4-1",cost:335,power:2700500+Ho*1,resources:gi},{name:"TG4-2",cost:335,power:2700500+Ho*2,resources:gi},{name:"TG4-3",cost:335,power:2700500+Ho*3,resources:gi},{name:"TG4-4",cost:335,power:2700500+Ho*4,resources:gi},{name:"TG 5",cost:335,power:3016500,resources:gi}];
+var At =337e3/20;
+var Zi =1347e3-At*5;
+var Bx =[{name:"Base",cost:0,power:Zi},{name:"30-1",cost:33,power:Zi+At*1,resources:vi},{name:"30-2",cost:33,power:Zi+At*2,resources:vi},{name:"30-3",cost:33,power:Zi+At*3,resources:vi},{name:"30-4",cost:33,power:Zi+At*4,resources:vi},{name:"TG 1",cost:33,power:1347e3,resources:vi},{name:"TG1-1",cost:39,power:1347e3+At*1,resources:_i},{name:"TG1-2",cost:39,power:1347e3+At*2,resources:_i},{name:"TG1-3",cost:39,power:1347e3+At*3,resources:_i},{name:"TG1-4",cost:39,power:1347e3+At*4,resources:_i},{name:"TG 2",cost:39,power:1431250,resources:_i},{name:"TG2-1",cost:59,power:1431250+At*1,resources:yi},{name:"TG2-2",cost:59,power:1431250+At*2,resources:yi},{name:"TG2-3",cost:59,power:1431250+At*3,resources:yi},{name:"TG2-4",cost:59,power:1431250+At*4,resources:yi},{name:"TG 3",cost:59,power:1515500,resources:yi},{name:"TG3-1",cost:70,power:1515500+At*1,resources:xi},{name:"TG3-2",cost:70,power:1515500+At*2,resources:xi},{name:"TG3-3",cost:70,power:1515500+At*3,resources:xi},{name:"TG3-4",cost:70,power:1515500+At*4,resources:xi},{name:"TG 4",cost:70,power:1599750,resources:xi},{name:"TG4-1",cost:83,power:1599750+At*1,resources:bi},{name:"TG4-2",cost:83,power:1599750+At*2,resources:bi},{name:"TG4-3",cost:83,power:1599750+At*3,resources:bi},{name:"TG4-4",cost:83,power:1599750+At*4,resources:bi},{name:"TG 5",cost:83,power:1684e3,resources:bi}];
+var Ux =304700;
+var tf =[{name:"Base",cost:0,power:Ux},{name:"30-1",cost:59,power:316180,resources:wi},{name:"30-2",cost:59,power:327660,resources:wi},{name:"30-3",cost:59,power:339140,resources:wi},{name:"30-4",cost:59,power:350620,resources:wi},{name:"TG 1",cost:59,power:362100,resources:wi},{name:"TG1-1",cost:71,power:373580,resources:Si},{name:"TG1-2",cost:71,power:385060,resources:Si},{name:"TG1-3",cost:71,power:396540,resources:Si},{name:"TG1-4",cost:71,power:408020,resources:Si},{name:"TG 2",cost:71,power:419500,resources:Si},{name:"TG2-1",cost:107,power:430980,resources:Ci},{name:"TG2-2",cost:107,power:442460,resources:Ci},{name:"TG2-3",cost:107,power:453940,resources:Ci},{name:"TG2-4",cost:107,power:465420,resources:Ci},{name:"TG 3",cost:107,power:476900,resources:Ci},{name:"TG3-1",cost:126,power:489540,resources:Ti},{name:"TG3-2",cost:126,power:502180,resources:Ti},{name:"TG3-3",cost:126,power:514820,resources:Ti},{name:"TG3-4",cost:126,power:527460,resources:Ti},{name:"TG 4",cost:126,power:540100,resources:Ti},{name:"TG4-1",cost:150,power:552740,resources:Ii},{name:"TG4-2",cost:150,power:565380,resources:Ii},{name:"TG4-3",cost:150,power:578020,resources:Ii},{name:"TG4-4",cost:150,power:590660,resources:Ii},{name:"TG 5",cost:150,power:603300,resources:Ii}];
+var Lt =288e3/20;
+var Qi =115e4-Lt*5;
+var qx =[{name:"Base",cost:0,power:Qi},{name:"30-1",cost:26,power:Qi+Lt*1,resources:Ei},{name:"30-2",cost:26,power:Qi+Lt*2,resources:Ei},{name:"30-3",cost:26,power:Qi+Lt*3,resources:Ei},{name:"30-4",cost:26,power:Qi+Lt*4,resources:Ei},{name:"TG 1",cost:26,power:115e4,resources:Ei},{name:"TG1-1",cost:31,power:115e4+Lt*1,resources:Ni},{name:"TG1-2",cost:31,power:115e4+Lt*2,resources:Ni},{name:"TG1-3",cost:31,power:115e4+Lt*3,resources:Ni},{name:"TG1-4",cost:31,power:115e4+Lt*4,resources:Ni},{name:"TG 2",cost:31,power:1222e3,resources:Ni},{name:"TG2-1",cost:47,power:1222e3+Lt*1,resources:Ai},{name:"TG2-2",cost:47,power:1222e3+Lt*2,resources:Ai},{name:"TG2-3",cost:47,power:1222e3+Lt*3,resources:Ai},{name:"TG2-4",cost:47,power:1222e3+Lt*4,resources:Ai},{name:"TG 3",cost:47,power:1294e3,resources:Ai},{name:"TG3-1",cost:56,power:1294e3+Lt*1,resources:Li},{name:"TG3-2",cost:56,power:1294e3+Lt*2,resources:Li},{name:"TG3-3",cost:56,power:1294e3+Lt*3,resources:Li},{name:"TG3-4",cost:56,power:1294e3+Lt*4,resources:Li},{name:"TG 4",cost:56,power:1366e3,resources:Li},{name:"TG4-1",cost:67,power:1366e3+Lt*1,resources:Mi},{name:"TG4-2",cost:67,power:1366e3+Lt*2,resources:Mi},{name:"TG4-3",cost:67,power:1366e3+Lt*3,resources:Mi},{name:"TG4-4",cost:67,power:1366e3+Lt*4,resources:Mi},{name:"TG 5",cost:67,power:1438e3,resources:Mi}];
+var Vx =[{name:"Base",cost:0,power:21e4,resources:{wood:0,bread:0,stone:0,iron:0}},{name:"TG 1",cost:0,power:217260,resources:{wood:0,bread:0,stone:0,iron:0}},{name:"TG1-1",cost:71,power:224148,resources:Ri},{name:"TG1-2",cost:71,power:231036,resources:Ri},{name:"TG1-3",cost:71,power:237924,resources:Ri},{name:"TG1-4",cost:71,power:244812,resources:Ri},{name:"TG 2",cost:71,power:251700,resources:Ri},{name:"TG2-1",cost:107,power:258588,resources:ki},{name:"TG2-2",cost:107,power:265476,resources:ki},{name:"TG2-3",cost:107,power:272364,resources:ki},{name:"TG2-4",cost:107,power:279252,resources:ki},{name:"TG 3",cost:107,power:286140,resources:ki},{name:"TG3-1",cost:126,power:293724,resources:Pi},{name:"TG3-2",cost:126,power:301308,resources:Pi},{name:"TG3-3",cost:126,power:308892,resources:Pi},{name:"TG3-4",cost:126,power:316476,resources:Pi},{name:"TG 4",cost:126,power:324060,resources:Pi},{name:"TG4-1",cost:150,power:331644,resources:Di},{name:"TG4-2",cost:150,power:339228,resources:Di},{name:"TG4-3",cost:150,power:346812,resources:Di},{name:"TG4-4",cost:150,power:354396,resources:Di},{name:"TG 5",cost:150,power:361980,resources:Di}];
+var Mt =299e3/20;
+var el =1196e3-Mt*5;
+var jx =[{name:"Base",cost:0,power:el},{name:"30-1",cost:26,power:el+Mt*1},{name:"30-2",cost:26,power:el+Mt*2},{name:"30-3",cost:26,power:el+Mt*3},{name:"30-4",cost:26,power:el+Mt*4},{name:"TG 1",cost:26,power:1196e3},{name:"TG1-1",cost:31,power:1196e3+Mt*1},{name:"TG1-2",cost:31,power:1196e3+Mt*2},{name:"TG1-3",cost:31,power:1196e3+Mt*3},{name:"TG1-4",cost:31,power:1196e3+Mt*4},{name:"TG 2",cost:31,power:1270750},{name:"TG2-1",cost:47,power:1270750+Mt*1},{name:"TG2-2",cost:47,power:1270750+Mt*2},{name:"TG2-3",cost:47,power:1270750+Mt*3},{name:"TG2-4",cost:47,power:1270750+Mt*4},{name:"TG 3",cost:47,power:1345500},{name:"TG3-1",cost:56,power:1345500+Mt*1},{name:"TG3-2",cost:56,power:1345500+Mt*2},{name:"TG3-3",cost:56,power:1345500+Mt*3},{name:"TG3-4",cost:56,power:1345500+Mt*4},{name:"TG 4",cost:56,power:1420250},{name:"TG4-1",cost:67,power:1420250+Mt*1},{name:"TG4-2",cost:67,power:1420250+Mt*2},{name:"TG4-3",cost:67,power:1420250+Mt*3},{name:"TG4-4",cost:67,power:1420250+Mt*4},{name:"TG 5",cost:67,power:1495e3}];
+  return { truegoldBuildings: { town_center: Gx, embassy: Bx, barracks: tf, range: tf, stable: tf, command_center: qx, war_academy: Vx, infirmary: jx } };
+})();
