@@ -1,7 +1,7 @@
 /* service worker — تخزين مؤقت للعمل بدون إنترنت */
-var CACHE = "ks-calc-v7";
+var CACHE = "ks-calc-v28";
 var ASSETS = [
-  "./", "./index.html", "./app.js", "./data.js", "./data2.js", "./data3.js", "./data4.js", "./styles.css",
+  "./", "./index.html", "./privacy.html", "./app.js", "./data.js", "./data2.js", "./data3.js", "./data4.js", "./data5.js", "./styles.css",
   "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"
 ];
 self.addEventListener("install", function (e) {
@@ -14,6 +14,8 @@ self.addEventListener("activate", function (e) {
 });
 self.addEventListener("fetch", function (e) {
   if (e.request.method !== "GET") return;
+  // لا تتدخّل في طلبات الطرف الثالث (إعلانات/تحليلات) — تمر مباشرة للشبكة
+  if (new URL(e.request.url).origin !== self.location.origin) return;
   e.respondWith(
     caches.match(e.request).then(function (cached) {
       return cached || fetch(e.request).then(function (res) {

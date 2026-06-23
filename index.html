@@ -9,6 +9,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="icon-192.png" />
 <link rel="stylesheet" href="styles.css" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5024836373924564" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="app">
@@ -16,7 +17,16 @@
     <button class="backbtn" id="backBtn" aria-label="back">→</button>
     <div class="logo"><img src="icon.svg" alt="K" /></div>
     <div class="brand"><span class="name" id="brandName">حاسبة كينغ شوت</span><small id="brandSub">أدوات اللاعب الكاملة</small></div>
-    <button class="langbtn" id="langBtn">EN</button>
+    <div class="lang-wrap" id="langWrap">
+      <button class="langbtn" id="langBtn" aria-label="Language">ع</button>
+      <div class="lang-drop" id="langDrop">
+        <button data-lang="ar">عربي</button>
+        <button data-lang="en">English</button>
+        <button data-lang="zh">中文</button>
+        <button data-lang="ko">한국어</button>
+        <button data-lang="es">Español</button>
+      </div>
+    </div>
   </header>
 
   <!-- HOME -->
@@ -41,6 +51,7 @@
 <script src="data2.js"></script>
 <script src="data3.js"></script>
 <script src="data4.js"></script>
+<script src="data5.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
