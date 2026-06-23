@@ -856,6 +856,14 @@
     var offPlayers = [{name:"",march:5*60},{name:"",march:5*60},{name:"",march:5*60}];
     var asmSec = 5 * 60;
     var offTimer = null;
+    var castleTouched = false; // هل عدّل المستخدم وقت الضربة؟ (لتجنّب تنبيه «فات الأوان» على الوقت الافتراضي)
+    function setTimeHint() {
+      return lang==="ar"?"👆 عدّل الوقت أعلاه لوقت العدو الفعلي":
+             lang==="zh"?"👆 请将上方时间调整为敌方实际时间":
+             lang==="ko"?"👆 위 시간을 적의 실제 시간으로 조정하세요":
+             lang==="es"?"👆 Ajusta la hora arriba a la hora real del enemigo":
+             "👆 Adjust the time above to the enemy's actual time";
+    }
 
     function fmtUTC(sec) {
       sec = ((sec % 86400) + 86400) % 86400;
@@ -900,6 +908,36 @@
       return (parseInt(($(prefix+"H")||{}).value,10)||0)*3600 + (parseInt(($(prefix+"M")||{}).value,10)||0)*60 + (parseInt(($(prefix+"S")||{}).value,10)||0);
     }
 
+    // === نسخ النتيجة كرسالة جاهزة للمشاركة في اللعبة ===
+    var castleCopyText = "";
+    var COPY_FOOTER = "\n━━━━━━━━━━\n🎮 حاسبة كينغ شوت\n🔗 gamecalculator1.netlify.app\n🙏 شكراً لاستخدامك التطبيق — معزي 507";
+    function copyBtnHtml() {
+      var lbl = lang==="ar"?"📋 نسخ الرسالة":lang==="zh"?"📋 复制消息":lang==="ko"?"📋 메시지 복사":lang==="es"?"📋 Copiar mensaje":"📋 Copy message";
+      return '<button type="button" id="castleCopyBtn" class="copy-btn">' + lbl + '</button>';
+    }
+    function castleFallbackCopy(txt) {
+      var ta = document.createElement("textarea");
+      ta.value = txt; ta.style.position = "fixed"; ta.style.top = "-9999px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function bindCopyBtn() {
+      var b = $("castleCopyBtn");
+      if (!b) return;
+      b.onclick = function() {
+        var txt = castleCopyText, orig = b.textContent;
+        function done() {
+          b.textContent = lang==="ar"?"✓ تم النسخ!":lang==="zh"?"✓ 已复制!":lang==="ko"?"✓ 복사됨!":lang==="es"?"✓ ¡Copiado!":"✓ Copied!";
+          b.classList.add("copied");
+          setTimeout(function() { b.textContent = orig; b.classList.remove("copied"); }, 1500);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(txt).then(done).catch(function() { castleFallbackCopy(txt); done(); });
+        } else { castleFallbackCopy(txt); done(); }
+      };
+    }
+
     function modeToggleHtml() {
       return '<div class="field"><div class="seg" id="cModeToggle">' +
         '<button data-v="offense"' + (castleMode === "offense" ? ' class="on"' : "") + ">" + C.offMode + "</button>" +
@@ -916,7 +954,7 @@
     function buildOffense() {
       var addLbl = lang==="ar"?"+ إضافة لاعب":lang==="zh"?"+ 添加玩家":lang==="ko"?"+ 플레이어 추가":"+ Add player";
       var hitLbl = lang==="ar"?"وقت الضربة (UTC)":lang==="zh"?"打击时间 (UTC)":lang==="ko"?"타격 시간 (UTC)":"Hit time (UTC)";
-      var cu = curUTCPlus(30);
+      var cu = curUTC();
       inp.innerHTML = modeToggleHtml() +
         '<div class="field"><label>' + C.utcNow + ' <span style="color:var(--green);font-size:10px;margin-inline-start:4px">● LIVE</span></label>' +
         '<input type="text" id="cNow" readonly></div>' +
@@ -936,7 +974,7 @@
           computeOffense();
         });
       });
-      bindStepper("cHit", computeOffense);
+      bindStepper("cHit", function() { castleTouched = true; computeOffense(); });
       $("cAddPlayer").addEventListener("click", function() {
         offPlayers.push({name:"",march:5*60});
         renderOffensePlayers();
@@ -978,22 +1016,32 @@
       var asm = asmSec;
       var rows = statRow("🎯", C.hitAt, fmtUTC(hitSec), true);
       var minSend = Infinity;
+      var ctHdr = lang==="ar"?"⚔️ معركة القلعة — هجوم منسّق":lang==="zh"?"⚔️ 城堡战 — 协同进攻":lang==="ko"?"⚔️ 성 전투 — 합동 공격":lang==="es"?"⚔️ Batalla del castillo — Ataque":"⚔️ Castle Battle — Coordinated Attack";
+      var ctArr = lang==="ar"?"🎯 وقت الوصول الموحّد":lang==="zh"?"🎯 统一抵达时间":lang==="ko"?"🎯 통일 도착 시간":lang==="es"?"🎯 Hora de llegada":"🎯 Unified arrival";
+      var ctLaunch = lang==="ar"?"🚀 أوقات إطلاق الحشود:":lang==="zh"?"🚀 出兵时间：":lang==="ko"?"🚀 출진 시간:":lang==="es"?"🚀 Horas de lanzamiento:":"🚀 Launch times:";
+      var ct = ctHdr + "\n" + ctArr + ": " + fmtUTC(hitSec) + " UTC\n" + ctLaunch + "\n";
       offPlayers.forEach(function(p, i) {
         var sendSec = hitSec - p.march - asm;
         if (sendSec < minSend) minSend = sendSec;
         var lbl = p.name || (C.player + " " + (i+1));
         rows += statRow("🚀", lbl, fmtUTC(sendSec));
+        ct += "• " + lbl + ": " + fmtUTC(sendSec) + "\n";
       });
       if (minSend !== Infinity) {
         var remSec = ((minSend - nowSec) + 86400*2) % 86400;
-        if (remSec > 43200) { rows += '<div class="stat" style="color:var(--red)">' + C.defTooLate + "</div>"; }
+        if (remSec > 43200) {
+          if (castleTouched) rows += '<div class="stat" style="color:var(--red)">' + C.defTooLate + "</div>";
+          else rows += '<div class="time-hint">' + setTimeHint() + "</div>";
+        }
         else { rows += statRow("⏳", lang==="ar"?"المتبقي لأول إطلاق":lang==="zh"?"首发倒计时":lang==="ko"?"첫 발사까지":"Time to first launch", fmtTime(remSec)); }
       }
-      $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows;
+      castleCopyText = ct + COPY_FOOTER;
+      $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows + copyBtnHtml();
+      bindCopyBtn();
     }
 
     function buildDefense() {
-      var du = curUTCPlus(30);
+      var du = curUTC();
       var dHitLbl = lang==="ar"?"وقت ضربة العدو (UTC)":lang==="zh"?"敌方打击时间 (UTC)":lang==="ko"?"적 타격 시간 (UTC)":lang==="es"?"Hora del golpe enemigo (UTC)":"Enemy strike time (UTC)";
       inp.innerHTML = modeToggleHtml() +
         '<div class="field"><label>' + C.utcNow + '</label><input type="text" id="dNow" readonly></div>' +
@@ -1005,7 +1053,7 @@
         [1,2,3,4,5].map(function(n){return '<option'+(n===1?" selected":"")+">"+n+"</option>";}).join("") + "</select></div>";
 
       bindModeToggle();
-      bindStepper("dHit", computeDefense);
+      bindStepper("dHit", function() { castleTouched = true; computeDefense(); });
       ["dMm","dSs","dNum"].forEach(function(id){ $(id).addEventListener("input", computeDefense); $(id).addEventListener("change", computeDefense); });
       computeDefense();
     }
@@ -1023,23 +1071,32 @@
       var rows = statRow("🎯", C.hitAt, fmtUTC(hitSec), true);
       rows += statRow("🛡️", C.defLaunch, fmtUTC(launchBySec), true);
       if (tooLate) {
-        rows += '<div class="stat" style="color:var(--red)">' + C.defTooLate + "</div>";
+        if (castleTouched) rows += '<div class="stat" style="color:var(--red)">' + C.defTooLate + "</div>";
+        else rows += '<div class="time-hint">' + setTimeHint() + "</div>";
       } else {
         rows += statRow("⏳", C.defRemaining, fmtTime(remainSec));
       }
+      var ctHdr = lang==="ar"?"🛡️ معركة القلعة — دفاع منسّق":lang==="zh"?"🛡️ 城堡战 — 协同防御":lang==="ko"?"🛡️ 성 전투 — 합동 방어":lang==="es"?"🛡️ Batalla del castillo — Defensa":"🛡️ Castle Battle — Coordinated Defense";
+      var ctEnemy = lang==="ar"?"🎯 وقت ضربة العدو":lang==="zh"?"🎯 敌方打击时间":lang==="ko"?"🎯 적 타격 시간":lang==="es"?"🎯 Golpe enemigo":"🎯 Enemy strike";
+      var ctLaunch = lang==="ar"?"🛡️ أطلق حشدك بحد أقصى":lang==="zh"?"🛡️ 最迟出兵":lang==="ko"?"🛡️ 늦어도 출진":lang==="es"?"🛡️ Lanzar a más tardar":"🛡️ Launch by";
+      var ct = ctHdr + "\n" + ctEnemy + ": " + fmtUTC(hitSec) + " UTC\n" + ctLaunch + ": " + fmtUTC(launchBySec) + " UTC\n";
       if (nDef > 1) {
         for (var i = 2; i <= nDef; i++) {
           var stagger = launchBySec - (i-1)*30;
           rows += statRow("🛡️", C.player+" "+i, fmtUTC(stagger) + " <small>(−" + ((i-1)*30) + "s)</small>");
+          ct += "• " + C.player+" "+i + ": " + fmtUTC(stagger) + " (−" + ((i-1)*30) + "s)\n";
         }
       }
-      $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows;
+      castleCopyText = ct + COPY_FOOTER;
+      $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows + copyBtnHtml();
+      bindCopyBtn();
     }
 
     function bindModeToggle() {
       Array.prototype.forEach.call($("cModeToggle").children, function(b) {
         b.addEventListener("click", function() {
           castleMode = b.getAttribute("data-v");
+          castleTouched = false; // وقت جديد افتراضي عند تبديل الوضع
           $("calcResults").innerHTML = "";
           build();
         });

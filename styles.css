@@ -141,6 +141,14 @@ select:focus,input:focus{border-color:var(--gold)}
 .stat .sv small{color:var(--muted2);font-weight:600;font-size:11.5px}
 .stat .sv.big{font-size:20px;color:var(--gold2)}
 .stat.total{margin-top:4px;padding-top:14px;border-top:2px solid var(--line2)}
+.time-hint{text-align:center;color:var(--gold2);font-size:13.5px;font-weight:800;padding:14px 8px;
+  background:rgba(247,181,59,.08);border:1px dashed rgba(247,181,59,.35);border-radius:12px;margin-top:6px;line-height:1.6}
+.copy-btn{width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;cursor:pointer;
+  font-family:inherit;font-size:15px;font-weight:900;letter-spacing:.3px;color:#241402;
+  background:linear-gradient(135deg,var(--gold2),var(--gold-deep));
+  box-shadow:0 6px 18px rgba(232,118,31,.28);transition:transform .12s,filter .12s,background .2s}
+.copy-btn:active{transform:scale(.985);filter:brightness(.96)}
+.copy-btn.copied{background:linear-gradient(135deg,#5ef0b4,var(--green));color:#06351f;box-shadow:0 6px 18px rgba(70,224,160,.3)}
 .hint{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.55;text-align:center}
 .empty{text-align:center;color:var(--muted);font-size:13.5px;padding:14px 6px;line-height:1.6}
 
