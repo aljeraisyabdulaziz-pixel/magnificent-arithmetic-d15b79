@@ -1118,10 +1118,10 @@
         suf = suf||"";
         var aw = av>=bv?"color:var(--green);font-weight:800":"", bw = bv>=av?"color:var(--green);font-weight:800":"";
         return '<div class="stat"><div class="si">'+icon+'</div><div class="sl">'+label+
-          '</div><div class="sv"><span style="'+aw+'">'+Math.round(av*100)/100+suf+'</span>' +
+          '</div><div class="sv" dir="ltr"><span style="'+aw+'">'+Math.round(av*100)/100+suf+'</span>' +
           ' <small> | </small> <span style="'+bw+'">'+Math.round(bv*100)/100+suf+"</span></div></div>";
       }
-      $("calcResults").innerHTML = "<h4>"+A.name+"  ⚔  "+B.name+"</h4>" +
+      $("calcResults").innerHTML = '<h4><span dir="ltr">'+A.name+"  ⚔  "+B.name+'</span></h4>' +
         cmpRow("🗡️",C.attack,A.atk,B.atk,"%")+cmpRow("🛡️",C.defense,A.def,B.def,"%") +
         cmpRow("💥",C.lethality,A.let,B.let,"%")+cmpRow("❤️",C.health,A.hp,B.hp,"%");
     }
