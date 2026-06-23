@@ -1509,15 +1509,15 @@
   /* === الأبحاث === */
   var ROMAN = {"1":"I","2":"II","3":"III","4":"IV","5":"V","6":"VI"};
   var NODE_NAMES_AR = {
-    weapons_prep:"تجهيز الأسلحة", reprisal_tactics:"تكتيكات انتقامية",
+    weapons_prep:"إعداد الأسلحة", reprisal_tactics:"تكتيكات الانتقام",
     precision_targeting:"استهداف دقيق", cavalry_charge:"اندفاع الفرسان",
     defensive_formations:"تشكيلات دفاعية", picket_lines:"خطوط الاعتصام",
-    bulwark_formations:"تشكيلات الحصن", special_defensive_training:"تدريب الدفاع الخاص",
-    survival_techniques:"تقنيات البقاء", assault_techniques:"تقنيات الاقتحام",
-    regimental_expansion:"توسع الفوج", close_combat:"القتال المباشر",
-    targeted_sniping:"القنص الدقيق", lance_upgrade:"تطوير الرمح",
-    shield_upgrade:"تطوير الدرع", leathercraft:"صناعة الجلود",
-    fortified_mail:"البريد المحصن"
+    bulwark_formations:"تشكيلات الحصن", special_defensive_training:"التدريب الدفاعي الخاص",
+    survival_techniques:"تقنيات البقاء على قيد الحياة", assault_techniques:"تقنيات الاعتداء",
+    regimental_expansion:"توسع الفوج", close_combat:"قتال قريب",
+    targeted_sniping:"القنص المستهدف", lance_upgrade:"ترقية الرمح",
+    shield_upgrade:"ترقية الدرع", leathercraft:"صناعة الجلود",
+    fortified_mail:"تحسين الدروع"
   };
   function fmtNodeName(key) {
     var parts=key.split("_"), suffix="";
