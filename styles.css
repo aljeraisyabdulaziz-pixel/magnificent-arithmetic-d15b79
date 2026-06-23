@@ -156,9 +156,8 @@ footer{text-align:center;color:var(--muted2);font-size:11px;margin-top:30px;line
   border:2px solid var(--gold);background:var(--surface2);transition:opacity .25s}
 
 /* ---- الإعلانات وموافقة الكوكيز ---- */
-.ad-wrap{margin:18px 0;min-height:90px;display:flex;align-items:center;justify-content:center;
-  background:var(--surface);border:1px dashed var(--line2);border-radius:16px;overflow:hidden}
-.ad-wrap ins{width:100%}
+.ad-wrap{margin:16px 0;overflow:hidden;text-align:center}
+.ad-wrap ins{width:100%;display:block}
 .consent-bar{position:fixed;inset-inline:0;bottom:0;z-index:300;display:flex;flex-wrap:wrap;
   align-items:center;justify-content:center;gap:12px;padding:14px 18px;
   background:var(--surface2);border-top:1px solid var(--line2);box-shadow:0 -10px 30px rgba(0,0,0,.45);

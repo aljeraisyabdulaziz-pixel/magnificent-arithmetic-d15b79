@@ -66,7 +66,7 @@
      (2) ضع معرّفات الوحدات في AD_SLOTS  (3) أضف سكربت adsbygoogle في index.html.
      طالما ADSENSE_CLIENT فاضي، ما تظهر أي إعلانات ولا رسالة موافقة. */
   var ADSENSE_CLIENT = "ca-pub-5024836373924564";
-  var AD_SLOTS = { home_bottom: "", calc_bottom: "" }; // اسم المكان -> معرّف الوحدة (يُملأ بعد قبول AdSense)
+  var AD_SLOTS = { home_bottom: "2234371542", calc_bottom: "2234371542" }; // معرّف وحدة "بنر الموقع"
   function adsEnabled() { return /^ca-pub-\d+$/.test(ADSENSE_CLIENT); }
   function adsLive() { return adsEnabled() && Object.keys(AD_SLOTS).some(function (k) { return AD_SLOTS[k]; }); }
   function adSlot(name) {
@@ -440,6 +440,7 @@
     $("calcInputs").innerHTML = "";
     $("calcResults").innerHTML = "";
     $("calcResults").style.display = "";
+    if ($("calcAd")) { $("calcAd").innerHTML = adSlot("calc_bottom"); pushAds(); }
     if (id === "building")    return calcBuilding();
     if (id === "gear")        return calcGear();
     if (id === "events")      return calcEvents();
