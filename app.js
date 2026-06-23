@@ -131,7 +131,7 @@
         shards:      ["شظايا الأبطال","الشظايا المطلوبة لترقية النجوم."],
         compare:     ["مقارنة الأبطال","قارن الأبطال حسب النجوم والأسلحة والإحصائيات."],
         pets:        ["الحيوانات الأليفة","احسب تكلفة ترقية حيوانك الأليف: الطعام والكتيبات والجرعات."],
-        battle:      ["حاسبة القتال","توصية تشكيل القوات حسب نمط المعركة + الأبطال المقترحون."],
+        battle:      ["حاسبة القتال","توصية تشكيل القوات حسب نمط المعركة."],
         equip:       ["حاسبة العتاد","مثريل + تطوير + إتقان عتاد الأبطال الأسطوري."],
         lineups:     ["أفضل التشكيلات","أقوى تشكيلات أبطال الجيل الأول (Gen1)."]
       }
@@ -169,7 +169,7 @@
         shards:      ["Hero Shards","Shards needed for star upgrades."],
         compare:     ["Hero Comparison","Compare heroes by stars, weapons & stats."],
         pets:        ["Pets","Calculate pet upgrade cost: food, manuals & potions."],
-        battle:      ["Battle Calculator","Troop formation recommendation by combat mode + suggested heroes."],
+        battle:      ["Battle Calculator","Troop formation recommendation by combat mode."],
         equip:       ["Equipment Calculator","Mithril + Enhancement + Mastery for mythic hero gear."],
         lineups:     ["Best Lineups","Strongest Gen1 hero lineups."]
       }
@@ -207,7 +207,7 @@
         shards:      ["英雄碎片","升星所需碎片费用和奖励。"],
         compare:     ["英雄对比","按星级、武器和属性对比英雄。"],
         pets:        ["宠物","计算宠物升级所需食物、手册和药水。"],
-        battle:      ["战斗计算器","根据战斗模式推荐部队编成 + 推荐英雄。"],
+        battle:      ["战斗计算器","根据战斗模式推荐部队编成。"],
         equip:       ["装备计算器","秘银 + 强化 + 精通 神话英雄装备。"],
         lineups:     ["最佳阵容","最强的第一代 (Gen1) 英雄阵容。"]
       }
@@ -245,7 +245,7 @@
         shards:      ["영웅 파편","별 업그레이드에 필요한 파편 비용 및 보상."],
         compare:     ["영웅 비교","별, 무기 및 능력치로 영웅 비교."],
         pets:        ["펫","펫 업그레이드 비용: 음식·매뉴얼·물약 계산."],
-        battle:      ["전투 계산기","전투 모드별 부대 편성 추천 + 추천 영웅."],
+        battle:      ["전투 계산기","전투 모드별 부대 편성 추천."],
         equip:       ["장비 계산기","미스릴 + 강화 + 숙련 신화 영웅 장비."],
         lineups:     ["최고의 조합","가장 강력한 1세대 (Gen1) 영웅 조합."]
       }
@@ -283,7 +283,7 @@
         shards:      ["Fragmentos de Héroes","Fragmentos necesarios para mejoras de estrellas."],
         compare:     ["Comparar Héroes","Compara héroes por estrellas, armas y stats."],
         pets:        ["Mascotas","Calcula el costo de mejora de mascota: comida, manuales y pociones."],
-        battle:      ["Calculadora de Batalla","Recomendación de formación de tropas por modo de combate + héroes sugeridos."],
+        battle:      ["Calculadora de Batalla","Recomendación de formación de tropas por modo de combate."],
         equip:       ["Calculadora de Equipo","Mithril + Mejora + Maestría del equipo mítico de héroes."],
         lineups:     ["Mejores Alineaciones","Las alineaciones de héroes Gen1 más fuertes."]
       }
@@ -1514,7 +1514,7 @@
     defensive_formations:"تشكيلات دفاعية", picket_lines:"خطوط الاعتصام",
     bulwark_formations:"تشكيلات الحصن", special_defensive_training:"تدريب الدفاع الخاص",
     survival_techniques:"تقنيات البقاء", assault_techniques:"تقنيات الاقتحام",
-    regimental_expansion:"توسيع الفوج", close_combat:"القتال المباشر",
+    regimental_expansion:"توسع الفوج", close_combat:"القتال المباشر",
     targeted_sniping:"القنص الدقيق", lance_upgrade:"تطوير الرمح",
     shield_upgrade:"تطوير الدرع", leathercraft:"صناعة الجلود",
     fortified_mail:"البريد المحصن"
@@ -1896,17 +1896,8 @@
         statRow("🛡️", C.infantry+smP(r.infantry), fmtFull(inf), true) +
         statRow("🏹", C.archers+smP(r.archer), fmtFull(arch), true) +
         statRow("🐎", C.cavalry+smP(r.cavalry), fmtFull(cav), true);
-      var heroHtml = "";
-      if (mode==="bear_hunt") {
-        heroHtml = '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line2)">'+
-          '<div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:8px">'+
-          (isAr?"الأبطال المقترحون":lang==="zh"?"推荐英雄":lang==="ko"?"추천 영웅":lang==="es"?"Héroes sugeridos":"Suggested heroes")+'</div>'+
-          statRow("👑", isAr?"القادة":lang==="zh"?"队长":lang==="ko"?"리더":lang==="es"?"Líderes":"Leaders", FH.bear_hunt_leaders.join(" · "))+
-          statRow("🤝", isAr?"المنضمّون":lang==="zh"?"加入者":lang==="ko"?"참가자":lang==="es"?"Unidos":"Joiners", FH.bear_hunt_joiners.join(" · "))+
-          '<p class="hint" style="text-align:start">'+(isAr?FH.bear_hunt_joiner_noteAr:FH.bear_hunt_joiner_noteEn)+'</p></div>';
-      }
       $("calcResults").innerHTML = "<h4>"+L.results+" — "+pick(modes.find(function(m){ return m.id===mode; }))+"</h4>"+
-        rows + '<p class="hint" style="text-align:start">💡 '+(isAr?r.noteAr:r.noteEn)+'</p>' + heroHtml;
+        rows + '<p class="hint" style="text-align:start">💡 '+(isAr?r.noteAr:r.noteEn)+'</p>';
     }
     $("bTotal").addEventListener("input", compute);
     $("bMode").addEventListener("change", compute);
