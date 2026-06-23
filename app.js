@@ -814,17 +814,20 @@
     var L = t(), C = cl(), inp = $("calcInputs");
     var pts = KS_DATA.eventTroops, ut = K2.troopTrainTime;
     var tiersWithTime = ut.filter(function (r) { return r.time > 0; });
+    var posLbl = lang==="ar"?"مكافأة المنصب (٪)":lang==="zh"?"职位加成 (%)":lang==="ko"?"직책 보너스 (%)":lang==="es"?"Bono de cargo (%)":"Title bonus (%)";
+    var spdLbl = lang==="ar"?"مكافأة التسريع (٪)":lang==="zh"?"加速加成 (%)":lang==="ko"?"가속 보너스 (%)":lang==="es"?"Bono de aceleración (%)":"Speed-up bonus (%)";
     inp.innerHTML =
       '<div class="field"><label>' + L.tier + '</label><select id="tTier">' +
       tiersWithTime.map(function (r) { return '<option value="' + r.tier + '">' + r.tier + "</option>"; }).join("") + "</select></div>" +
-      '<div class="field"><label>' + C.speedBonus + '</label><input type="number" id="tBonus" min="0" value="0" inputmode="numeric"></div>' +
+      '<div class="row2"><div class="field"><label>' + posLbl + '</label><input type="number" id="tBonusPos" min="0" value="0" inputmode="numeric"></div>' +
+      '<div class="field"><label>' + spdLbl + '</label><input type="number" id="tBonusSpd" min="0" value="0" inputmode="numeric"></div></div>' +
       '<div class="field"><label>' + C.timeBudgetT + '</label><div class="row3">' +
       '<input type="number" id="tD" min="0" value="1" placeholder="' + C.days + '">' +
       '<input type="number" id="tH" min="0" value="0" placeholder="' + C.hours + '">' +
       '<input type="number" id="tM" min="0" value="0" placeholder="' + C.minutes + '"></div></div>';
     function compute() {
       var tier = $("tTier").value;
-      var bonus = parseFloat($("tBonus").value) || 0;
+      var bonus = (parseFloat($("tBonusPos").value) || 0) + (parseFloat($("tBonusSpd").value) || 0);
       var budget = (parseFloat($("tD").value)||0)*86400 + (parseFloat($("tH").value)||0)*3600 + (parseFloat($("tM").value)||0)*60;
       var urow = ut.find(function (r) { return r.tier === tier; });
       var prow = pts.find(function (r) { return r.tier === tier; }) || {};
@@ -833,12 +836,13 @@
       var tImg = TROOP_IMG.Infantry ? imgTag(TROOP_IMG.Infantry, "", "res-ic") : "🪖";
       $("calcResults").innerHTML = "<h4>" + L.results + " — " + tier + "</h4>" +
         statRow(tImg, C.trainable, fmtFull(troops), true) +
+        statRow("⏩", (lang==="ar"?"إجمالي مكافأة السرعة":lang==="zh"?"总速度加成":lang==="ko"?"총 속도 보너스":lang==="es"?"Bono total de velocidad":"Total speed bonus"), "+" + (Math.round(bonus*100)/100) + "%") +
         statRow("⚡", L.power, "+" + fmtNum((prow.power||0) * troops)) +
         statRow("🏆", L.kvk, fmtFull((prow.kvkPoints||0) * troops)) +
         statRow("🛡️", L.sg, fmtFull((prow.sgPoints||0) * troops)) +
         statRow("🐗", L.hog, fmtFull((prow.hogPoints||0) * troops));
     }
-    ["tTier","tBonus","tD","tH","tM"].forEach(function (id) {
+    ["tTier","tBonusPos","tBonusSpd","tD","tH","tM"].forEach(function (id) {
       $(id).addEventListener("input", compute); $(id).addEventListener("change", compute);
     });
     compute();
@@ -861,6 +865,8 @@
 
     // وقت UTC الحالي (للتعبئة المسبقة)
     function curUTC() { var d = new Date(); return { h: d.getUTCHours(), m: d.getUTCMinutes(), s: d.getUTCSeconds() }; }
+    // وقت UTC الحالي + دقائق (للتعبئة المسبقة بوقت مستقبلي جاهز)
+    function curUTCPlus(mins) { var d = new Date(); var t = (((d.getUTCHours()*3600 + d.getUTCMinutes()*60 + d.getUTCSeconds() + mins*60) % 86400) + 86400) % 86400; return { h: Math.floor(t/3600), m: Math.floor((t%3600)/60), s: t%60 }; }
     // عنصر اختيار وقت بأزرار +/− لكل وحدة (ساعة/دقيقة/ثانية) — معبّأ مسبقاً
     function timeStepperHtml(prefix, h, m, s) {
       var isAr = lang === "ar";
@@ -909,7 +915,7 @@
     function buildOffense() {
       var addLbl = lang==="ar"?"+ إضافة لاعب":lang==="zh"?"+ 添加玩家":lang==="ko"?"+ 플레이어 추가":"+ Add player";
       var hitLbl = lang==="ar"?"وقت الضربة (UTC)":lang==="zh"?"打击时间 (UTC)":lang==="ko"?"타격 시간 (UTC)":"Hit time (UTC)";
-      var cu = curUTC();
+      var cu = curUTCPlus(30);
       inp.innerHTML = modeToggleHtml() +
         '<div class="field"><label>' + C.utcNow + ' <span style="color:var(--green);font-size:10px;margin-inline-start:4px">● LIVE</span></label>' +
         '<input type="text" id="cNow" readonly></div>' +
@@ -986,7 +992,7 @@
     }
 
     function buildDefense() {
-      var du = curUTC();
+      var du = curUTCPlus(30);
       var dHitLbl = lang==="ar"?"وقت ضربة العدو (UTC)":lang==="zh"?"敌方打击时间 (UTC)":lang==="ko"?"적 타격 시간 (UTC)":lang==="es"?"Hora del golpe enemigo (UTC)":"Enemy strike time (UTC)";
       inp.innerHTML = modeToggleHtml() +
         '<div class="field"><label>' + C.utcNow + '</label><input type="text" id="dNow" readonly></div>' +
