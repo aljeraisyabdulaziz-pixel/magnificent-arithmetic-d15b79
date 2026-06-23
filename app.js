@@ -1536,6 +1536,7 @@
     function build(){
       var nodes=list();
       var branchLbl = lang==="ar"?"فرع":lang==="zh"?"分支":lang==="ko"?"분기":"Branch";
+      var rsBonusLbl = lang==="ar"?"مكافأة سرعة البحث (٪)":lang==="zh"?"研究速度加成 (%)":lang==="ko"?"연구 속도 보너스 (%)":lang==="es"?"Bono de velocidad de investigación (%)":"Research speed bonus (%)";
       inp.innerHTML=
         '<div class="field"><label>'+branchLbl+'</label><div class="seg" id="rsBranch">' +
         [1,2,3,4,5,6].map(function(n){
@@ -1544,11 +1545,13 @@
         '<div class="field"><label>'+C.node+'</label><select id="rsNode">' +
         nodes.map(function(nd,i){ return '<option value="'+i+'">'+fmtNodeName(nd.nameKey)+"</option>"; }).join("") + "</select></div>" +
         '<div class="row2"><div class="field"><label>'+L.from+'</label><select id="rsFrom"></select></div>' +
-        '<div class="field"><label>'+L.to+'</label><select id="rsTo"></select></div></div>';
+        '<div class="field"><label>'+L.to+'</label><select id="rsTo"></select></div></div>' +
+        '<div class="field"><label>'+rsBonusLbl+'</label><input type="number" id="rsBonus" min="0" value="0" inputmode="numeric"></div>';
       Array.prototype.forEach.call($("rsBranch").children, function(b){
         b.addEventListener("click", function(){ branch=parseInt(b.getAttribute("data-v"),10); build(); });
       });
       $("rsNode").addEventListener("change", fillLv);
+      $("rsBonus").addEventListener("input", compute);
       fillLv();
     }
     function fillLv(){
@@ -1579,8 +1582,12 @@
         var flat=st.stat==="troop_deployment_capacity"||st.stat==="rally_capacity";
         statTxt=statRow("📈",statName(st.stat)+" ("+trL+")","+"+Math.round(sum*100)/100+(flat?"":"%"));
       }
+      var bonus = parseFloat(($("rsBonus")||{}).value)||0;
+      var effTime = bonus>0 ? time/(1+bonus/100) : time;
+      var spdLbl = lang==="ar"?"مكافأة سرعة البحث":lang==="zh"?"研究速度加成":lang==="ko"?"연구 속도 보너스":lang==="es"?"Bono de velocidad":"Research speed";
       $("calcResults").innerHTML="<h4>"+L.results+"</h4>"+costRows(c,L)+
-        statRow("⏱️",L.time,fmtTime(time))+statTxt+statRow("⚡",L.power,"+"+fmtNum(power),true);
+        (bonus>0?statRow("⏩",spdLbl,"+"+bonus+"%"):"")+
+        statRow("⏱️",L.time,fmtTime(effTime))+statTxt+statRow("⚡",L.power,"+"+fmtNum(power),true);
     }
     build();
   }
