@@ -853,7 +853,7 @@
   function calcCastle() {
     var L = t(), C = cl(), inp = $("calcInputs");
     var castleMode = "offense";
-    var offPlayers = [{name:"",march:5*60},{name:"",march:5*60},{name:"",march:5*60}];
+    var offPlayers = [{name:"",march:5*60}];
     var asmSec = 5 * 60;
     var offTimer = null;
     var castleTouched = false; // هل عدّل المستخدم وقت الضربة؟ (لتجنّب تنبيه «فات الأوان» على الوقت الافتراضي)
