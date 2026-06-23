@@ -592,7 +592,7 @@
   var CL = {
     ar: {
       troop:"نوع القوة", infantry:"مشاة", cavalry:"فرسان", archers:"رماة",
-      node:"البحث", gold:"ذهب خالص", truegoldDust:"غبار الذهب الخالص", manuscripts:"مخطوطات",
+      node:"البحث", gold:"عملات ذهبية", truegoldDust:"ذهب خالص", manuscripts:"مخطوطات",
       speedBonus:"مكافأة السرعة (٪)", days:"أيام", hours:"ساعات", minutes:"دقائق",
       trainable:"عدد القوات الممكن تدريبها",
       star:"النجمة", subStar:"المرتبة", weaponLvl:"مستوى السلاح",
@@ -613,7 +613,7 @@
     },
     en: {
       troop:"Troop type", infantry:"Infantry", cavalry:"Cavalry", archers:"Archers",
-      node:"Research", gold:"Truegold", truegoldDust:"Truegold Dust", manuscripts:"Manuscripts",
+      node:"Research", gold:"Gold Coins", truegoldDust:"Truegold", manuscripts:"Manuscripts",
       speedBonus:"Speed bonus (%)", days:"Days", hours:"Hours", minutes:"Minutes",
       trainable:"Trainable troops",
       star:"Star", subStar:"Tier", weaponLvl:"Weapon level",
@@ -634,7 +634,7 @@
     },
     zh: {
       troop:"部队类型", infantry:"步兵", cavalry:"骑兵", archers:"弓箭手",
-      node:"研究节点", gold:"精金", truegoldDust:"精金尘", manuscripts:"手稿",
+      node:"研究节点", gold:"金币", truegoldDust:"精金", manuscripts:"手稿",
       speedBonus:"速度加成 (%)", days:"天", hours:"小时", minutes:"分钟",
       trainable:"可训练士兵数",
       star:"星级", subStar:"阶段", weaponLvl:"武器等级",
@@ -655,7 +655,7 @@
     },
     ko: {
       troop:"부대 유형", infantry:"보병", cavalry:"기병", archers:"궁수",
-      node:"연구 노드", gold:"정금", truegoldDust:"정금 먼지", manuscripts:"필사본",
+      node:"연구 노드", gold:"골드", truegoldDust:"정금", manuscripts:"필사본",
       speedBonus:"속도 보너스 (%)", days:"일", hours:"시간", minutes:"분",
       trainable:"훈련 가능한 병사 수",
       star:"별", subStar:"단계", weaponLvl:"무기 레벨",
@@ -676,7 +676,7 @@
     },
     es: {
       troop:"Tipo de tropa", infantry:"Infantería", cavalry:"Caballería", archers:"Arqueros",
-      node:"Investigación", gold:"Truegold", truegoldDust:"Polvo Truegold", manuscripts:"Manuscritos",
+      node:"Investigación", gold:"Monedas de oro", truegoldDust:"Truegold", manuscripts:"Manuscritos",
       speedBonus:"Bono de velocidad (%)", days:"días", hours:"horas", minutes:"minutos",
       trainable:"Tropas entrenables",
       star:"Estrella", subStar:"Tier", weaponLvl:"Nivel de arma",
@@ -738,7 +738,7 @@
   function costRows(c, L) {
     var rows = "", defs = [
       ["wood","🪵",L.wood],["bread","🍞",L.bread],["stone","🪨",L.stone],["iron","⛓️",L.iron],
-      ["coins","🪙",L.coins],["gold","👑",cl().gold],["truegoldDust","✨",cl().truegoldDust]
+      ["coins","🪙",L.coins],["gold","💰",cl().gold],["truegoldDust","✨",cl().truegoldDust]
     ];
     defs.forEach(function (d) {
       if (c[d[0]]) rows += statRow(d[1], d[2], fmtNum(c[d[0]]) + " <small>(" + fmtFull(c[d[0]]) + ")</small>");
