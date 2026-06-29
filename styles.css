@@ -90,13 +90,21 @@ header.top{
   box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.05)}
 .tool::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;
   background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:0;transition:.2s}
-.tool::after{content:"";position:absolute;inset:auto -40% -60% -40%;height:120px;border-radius:50%;
-  background:radial-gradient(circle,rgba(168,85,247,.16),transparent 70%);opacity:0;transition:.2s;pointer-events:none}
+.tool::after{content:"";position:absolute;inset:auto -45% -65% -45%;height:140px;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,85,247,.22),transparent 70%);opacity:0;transition:.25s;pointer-events:none;z-index:0}
+.tool-bg{position:absolute;bottom:-24px;inset-inline-end:-12px;font-size:94px;line-height:1;z-index:0;
+  opacity:.12;transform:rotate(-14deg);pointer-events:none;-webkit-user-select:none;user-select:none;
+  filter:saturate(1.15) drop-shadow(0 0 14px rgba(168,85,247,.35))}
+.tool>.ic,.tool>h3,.tool>p{position:relative;z-index:1}
+.tool>.badge{z-index:2}
 .tool:active{transform:scale(.97)}
+.tool.live::after{opacity:.6}
 .tool.live:active{border-color:var(--gold)}
 .tool.live:hover{box-shadow:var(--shadow-sm),0 0 22px rgba(168,85,247,.18),inset 0 1px 0 rgba(255,255,255,.05)}
 .tool.live:hover::before{opacity:.95}
 .tool.live:hover::after{opacity:1}
+.tool.live:hover .tool-bg{opacity:.2;transform:rotate(-8deg) scale(1.05);transition:.25s}
+.tool.soon .tool-bg{opacity:.06;filter:grayscale(.6)}
 .tool .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:23px;
   background:radial-gradient(circle at 30% 25%,var(--surface3),var(--surface2));border:1px solid var(--line2);
   box-shadow:inset 0 0 16px rgba(168,85,247,.18),0 4px 12px rgba(0,0,0,.3)}

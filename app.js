@@ -408,6 +408,7 @@
           ? '<img src="' + imgUrl + '" alt="" loading="lazy" data-fb="' + x.icon + '" onerror="this.outerHTML=this.dataset.fb">'
           : x.icon;
         html += '<div class="tool ' + (x.active ? "live" : "soon") + '" data-id="' + x.id + '">' +
+          '<span class="tool-bg" aria-hidden="true">' + x.icon + "</span>" +
           badge + '<div class="ic">' + icHtml + "</div>" +
           "<h3>" + info[0] + "</h3><p>" + info[1] + "</p></div>";
       });
