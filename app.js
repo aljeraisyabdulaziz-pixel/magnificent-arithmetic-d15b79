@@ -1299,7 +1299,7 @@
 
         // Section 2: Primary Skill
         '<div class="panel"><div class="panel-title">' + (isAr ? "مهارة المتخصص الأساسية" : "Primary Specialist Skill") +
-        ' <span id="spPsBadge" style="background:var(--gold);color:#241402;border-radius:9px;padding:2px 8px;font-size:10px;font-weight:900;margin-inline-start:6px">' +
+        ' <span id="spPsBadge" style="background:var(--gold);color:#fff;border-radius:9px;padding:2px 8px;font-size:10px;font-weight:900;margin-inline-start:6px">' +
         (isAr ? "المستوى" : "Level") + " 0 / " + psMxLv + "</span></div>" +
         '<div style="font-weight:600;font-size:13px;margin-bottom:6px">' + psName + "</div>" +
         '<p style="font-size:12px;color:var(--muted);margin:0 0 12px;line-height:1.5">' + psDesc + "</p>" +
@@ -2051,7 +2051,7 @@
       html += '<div class="panel" style="margin-bottom:12px">'+
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'+
         '<span style="font-size:12px;font-weight:800;color:var(--muted)">#'+(i+1)+'</span>'+
-        '<span style="font-size:11px;font-weight:900;letter-spacing:.5px;padding:3px 9px;border-radius:999px;background:linear-gradient(135deg,var(--gold2),var(--gold-deep));color:#241402">'+(isAr?u.tagAr:u.tagEn)+'</span></div>'+
+        '<span style="font-size:11px;font-weight:900;letter-spacing:.5px;padding:3px 9px;border-radius:999px;background:linear-gradient(135deg,var(--gold2),var(--gold-deep));color:#fff">'+(isAr?u.tagAr:u.tagEn)+'</span></div>'+
         '<div style="font-weight:800;font-size:15px;margin-bottom:7px;line-height:1.5">'+u.heroes.join("  ·  ")+'</div>'+
         '<p style="margin:0;font-size:12.5px;color:var(--muted);line-height:1.6">'+(isAr?u.descAr:u.descEn)+'</p></div>';
     });
