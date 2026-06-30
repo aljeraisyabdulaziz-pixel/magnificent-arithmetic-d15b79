@@ -831,9 +831,9 @@
       '<div class="row2"><div class="field"><label>' + posLbl + '</label><input type="number" id="tBonusPos" min="0" value="0" inputmode="numeric"></div>' +
       '<div class="field"><label>' + spdLbl + '</label><input type="number" id="tBonusSpd" min="0" value="0" inputmode="numeric"></div></div>' +
       '<div class="field"><label>' + C.timeBudgetT + '</label><div class="row3">' +
-      '<input type="number" id="tD" min="0" value="1" placeholder="' + C.days + '">' +
-      '<input type="number" id="tH" min="0" value="0" placeholder="' + C.hours + '">' +
-      '<input type="number" id="tM" min="0" value="0" placeholder="' + C.minutes + '"></div></div>';
+      '<div><label style="font-size:11px;margin-bottom:5px">' + C.days + '</label><input type="number" id="tD" min="0" value="1"></div>' +
+      '<div><label style="font-size:11px;margin-bottom:5px">' + C.hours + '</label><input type="number" id="tH" min="0" value="0"></div>' +
+      '<div><label style="font-size:11px;margin-bottom:5px">' + C.minutes + '</label><input type="number" id="tM" min="0" value="0"></div></div></div>';
     function compute() {
       var tier = $("tTier").value;
       var bonus = (parseFloat($("tBonusPos").value) || 0) + (parseFloat($("tBonusSpd").value) || 0);
@@ -845,6 +845,7 @@
       var tImg = TROOP_IMG.Infantry ? imgTag(TROOP_IMG.Infantry, "", "res-ic") : "🪖";
       $("calcResults").innerHTML = "<h4>" + L.results + " — " + tier + "</h4>" +
         statRow(tImg, C.trainable, fmtFull(troops), true) +
+        statRow("⏱️", (lang==="ar"?"وقت تدريب جندي واحد":lang==="zh"?"单兵训练时间":lang==="ko"?"1명 훈련 시간":lang==="es"?"Tiempo por tropa":"Time per troop"), fmtTime(per)) +
         statRow("⏩", (lang==="ar"?"إجمالي مكافأة السرعة":lang==="zh"?"总速度加成":lang==="ko"?"총 속도 보너스":lang==="es"?"Bono total de velocidad":"Total speed bonus"), "+" + (Math.round(bonus*100)/100) + "%") +
         statRow("⚡", L.power, "+" + fmtNum((prow.power||0) * troops)) +
         statRow("🏆", L.kvk, fmtFull((prow.kvkPoints||0) * troops)) +
