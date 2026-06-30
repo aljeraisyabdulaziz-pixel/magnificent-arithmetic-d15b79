@@ -1959,35 +1959,46 @@
           '<div><label style="font-size:11px">' + tr("فتك %", "Lethality %") + '</label><input type="number" min="0" id="bL_' + T.k + '" value="200"></div>' +
           '<div><label style="font-size:11px">' + tr("الرتبة", "Tier") + '</label><select id="bT_' + T.k + '">' + tierOpts(T.ti) + '</select></div>' +
           '</div></div>';
-      }).join("");
+      }).join("") +
+      '<div class="field"><label>' + tr("بونص إضافي من المنضمين/التحالف (اختياري)", "Extra bonus from joiners/alliance (optional)") + '</label><div class="row2">' +
+      '<div><label style="font-size:11px">' + tr("هجوم %", "Attack %") + '</label><input type="number" min="0" id="bJA" value="0"></div>' +
+      '<div><label style="font-size:11px">' + tr("فتك %", "Lethality %") + '</label><input type="number" min="0" id="bJL" value="0"></div>' +
+      '</div></div>';
 
     function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
     function pct(x) { return Math.round(x * 1000) / 10; }
     function fmtDmg(p) { return p >= 1e6 ? (p / 1e6).toFixed(2) + tr(" مليون", "M") : p >= 1e3 ? (p / 1e3).toFixed(0) + tr(" ألف", "K") : fmt(p); }
 
     function compute() {
+      var jA = Math.max(0, parseFloat($("bJA").value) || 0);
+      var jL = Math.max(0, parseFloat($("bJL").value) || 0);
       var D = {}, totalN = 0;
       TYPES.forEach(function (ty) {
         var n = Math.max(0, parseInt($("bN_" + ty.k).value, 10) || 0);
-        var a = Math.max(0, parseFloat($("bA_" + ty.k).value) || 0);
-        var l = Math.max(0, parseFloat($("bL_" + ty.k).value) || 0);
+        var a = (Math.max(0, parseFloat($("bA_" + ty.k).value) || 0)) + jA;
+        var l = (Math.max(0, parseFloat($("bL_" + ty.k).value) || 0)) + jL;
         var ti = parseInt($("bT_" + ty.k).value, 10) || 10;
         D[ty.k] = { n: n, power: BASE[ty.k] * (TIER_ATT[ti] || 60) * (1 + a / 100) * (1 + l / 100) };
         totalN += n;
       });
-      function dmgOf(n, power) { return SCALE * CONST * Math.sqrt(Math.max(0, n)) * power; }
-      var dCur = dmgOf(D.inf.n, D.inf.power) + dmgOf(D.cav.n, D.cav.power) + dmgOf(D.arc.n, D.arc.power);
+      // عقوبة الـ5000: لو المشاة أو الفرسان أقل من 5000 → ضرر النوع ×0.85 (مهارات الدعم لا تتفعّل)
+      function dmgOf(n, power, tank) { var d = SCALE * CONST * Math.sqrt(Math.max(0, n)) * power; if (tank && n > 0 && n < 5000) d *= 0.85; return d; }
+      var dCur = dmgOf(D.inf.n, D.inf.power, true) + dmgOf(D.cav.n, D.cav.power, true) + dmgOf(D.arc.n, D.arc.power, false);
 
       var ws = D.inf.power * D.inf.power + D.cav.power * D.cav.power + D.arc.power * D.arc.power || 1;
-      var fInf = D.inf.power * D.inf.power / ws, fCav = D.cav.power * D.cav.power / ws, fArc = D.arc.power * D.arc.power / ws;
-      var oInf = Math.round(totalN * fInf), oCav = Math.round(totalN * fCav), oArc = Math.max(0, totalN - oInf - oCav);
-      var dOpt = dmgOf(oInf, D.inf.power) + dmgOf(oCav, D.cav.power) + dmgOf(oArc, D.arc.power);
+      var oInf = Math.round(totalN * D.inf.power * D.inf.power / ws), oCav = Math.round(totalN * D.cav.power * D.cav.power / ws);
+      if (totalN >= 20000) { oInf = Math.max(5000, oInf); oCav = Math.max(5000, oCav); }  // اضمن 5000+ لتفعيل مهارات الدعم
+      var oArc = Math.max(0, totalN - oInf - oCav);
+      var dOpt = dmgOf(oInf, D.inf.power, true) + dmgOf(oCav, D.cav.power, true) + dmgOf(oArc, D.arc.power, false);
       var gain = dCur > 0 ? (dOpt / dCur - 1) * 100 : 0;
+      var pInf = totalN ? oInf / totalN : 0, pCav = totalN ? oCav / totalN : 0, pArc = totalN ? oArc / totalN : 0;
+      var lowTank = (D.inf.n > 0 && D.inf.n < 5000) || (D.cav.n > 0 && D.cav.n < 5000);
 
       var rows =
         statRow("💥", tr("ضررك الحالي", "Your current damage"), fmtDmg(dCur) + tr(" نقطة", " pts"), true) +
+        (lowTank ? '<div class="time-hint">' + tr("⚠️ مشاتك أو فرسانك أقل من 5000 — ضررهم منقوص 15% (مهارات الدعم تحتاج 5000+).", "⚠️ Infantry or cavalry under 5,000 — their damage is cut 15% (support skills need 5,000+).") + '</div>' : "") +
         '<div class="stat total"><div class="si">🐻</div><div class="sl">' + tr("أفضل تشكيلة (نفس العدد)", "Best split (same total)") +
-        '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(fInf) + '% · 🐎 ' + pct(fCav) + '% · 🏹 ' + pct(fArc) + '%</div></div>' +
+        '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(pInf) + '% · 🐎 ' + pct(pCav) + '% · 🏹 ' + pct(pArc) + '%</div></div>' +
         statRow("🛡️", tr("مشاة", "Infantry"), fmt(oInf)) +
         statRow("🐎", tr("فرسان", "Cavalry"), fmt(oCav)) +
         statRow("🏹", tr("رماة", "Archers"), fmt(oArc)) +
@@ -1995,12 +2006,12 @@
         (gain > 0.5 ? statRow("📈", tr("الزيادة لو رتّبت التشكيلة", "Gain if you rebalance"), "+" + Math.round(gain) + "%") : "");
 
       var note = tr(
-        "💡 أدخل المكافآت لكل نوع من تقرير معركتك — وكذا يدخل أثر أبطالك تلقائياً. الرماة أعلى ضرر ثم الفرسان؛ أبقِ مشاة لتحمّل ضربات الدب. الأرقام تقديرية ومُعايرة على نموذج Frakinator.",
-        "💡 Enter per-type bonuses from your battle report — that includes your heroes automatically. Archers hit hardest, then cavalry; keep infantry to tank. Numbers are estimates calibrated to the Frakinator model.");
+        "💡 أدخل المكافآت لكل نوع من تقرير معركتك (تشمل أبطالك). أبقِ المشاة والفرسان 5000+ لتفعيل مهارات الدعم. بونص المنضمين/التحالف يُضاف على الكل. الأرقام تقديرية ومُعايرة على Frakinator.",
+        "💡 Enter per-type bonuses from your battle report (includes heroes). Keep infantry & cavalry at 5,000+ to enable support skills. Joiner/alliance bonus adds to all. Numbers are estimates calibrated to Frakinator.");
       $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows + '<div class="hint">' + note + '</div>';
     }
 
-    var ids = [];
+    var ids = ["bJA", "bJL"];
     TYPES.forEach(function (ty) { ids.push("bN_" + ty.k, "bA_" + ty.k, "bL_" + ty.k, "bT_" + ty.k); });
     ids.forEach(function (id) { $(id).addEventListener("input", compute); $(id).addEventListener("change", compute); });
     compute();
