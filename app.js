@@ -1940,6 +1940,7 @@
     // A = (1+الهجوم/100)·(1+الفتك/100)  (نفس القيمة لكل الأنواع)
     // نسبة base_att بين الأنواع: مشاة ⅓ : فرسان 1 : رماة 4/3×1.1
     var CONST = (1.2 / 1000) * Math.sqrt(5000);          // ≈ 0.08485
+    var SCALE = 100;  // معايرة على ناتج Frakinator الحقيقي: 150k T10 @400/400 ≈ 7.97 مليون نقطة
     var BASE = { inf: 1 / 3, cav: 1, arc: (4 / 3) * 1.1 };
     // تدرّج الهجوم الأساسي حسب الرتبة (تقريبي، ~+22% للرتبة) — يضبط حجم المؤشر فقط
     var TIER_ATT = { 1: 10, 2: 12, 3: 15, 4: 18, 5: 22, 6: 27, 7: 33, 8: 40, 9: 49, 10: 60, 11: 73 };
@@ -1966,6 +1967,7 @@
 
     function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
     function pct(x) { return Math.round(x * 1000) / 10; }
+    function fmtDmg(p) { return p >= 1e6 ? (p / 1e6).toFixed(2) + tr(" مليون", "M") : p >= 1e3 ? (p / 1e3).toFixed(0) + tr(" ألف", "K") : fmt(p); }
 
     function compute() {
       var march = Math.max(0, parseInt($("bMarch").value, 10) || 0);
@@ -1979,7 +1981,7 @@
       var f = { inf: w.inf / ws, cav: w.cav / ws, arc: w.arc / ws };
       var nInf = Math.round(march * f.inf), nCav = Math.round(march * f.cav), nArc = Math.max(0, march - nInf - nCav);
       function dmg(ni, nc, na) {
-        return CONST * A * (Math.sqrt(Math.max(0, ni)) * eff.inf + Math.sqrt(Math.max(0, nc)) * eff.cav + Math.sqrt(Math.max(0, na)) * eff.arc);
+        return SCALE * CONST * A * (Math.sqrt(Math.max(0, ni)) * eff.inf + Math.sqrt(Math.max(0, nc)) * eff.cav + Math.sqrt(Math.max(0, na)) * eff.arc);
       }
       var dOpt = dmg(nInf, nCav, nArc);
       var e = Math.round(march / 3), dEven = dmg(e, e, march - 2 * e);
@@ -1992,12 +1994,12 @@
         statRow("🛡️", tr("مشاة", "Infantry"), fmt(nInf)) +
         statRow("🐎", tr("فرسان", "Cavalry"), fmt(nCav)) +
         statRow("🏹", tr("رماة", "Archers"), fmt(nArc)) +
-        statRow("💥", tr("قوة ضررك للدب (للمقارنة)", "Your bear damage power (compare)"), fmt(dOpt), true) +
+        statRow("💥", tr("الضرر التقديري للدب", "Estimated bear damage"), fmtDmg(dOpt) + tr(" نقطة", " pts"), true) +
         statRow("📈", tr("أفضل من التوزيع المتساوي", "Better than even split"), "+" + Math.round(gain) + "%");
 
       var note = tr(
-        "💡 الرماة أعلى ضرر للدب ثم الفرسان، وكل ما زادت رتبة نوع زاد نصيبه في التشكيلة. أبقِ شيئاً من المشاة لتحمّل ضربات الدب. «قوة الضرر» للمقارنة بين إعداداتك — ليس رقم اللعبة الحرفي.",
-        "💡 Archers do the most bear damage, then cavalry; a higher tier on a type raises its share. Keep some infantry to tank the bear's hits. The damage power is for comparing setups — not the literal in-game number.");
+        "💡 الرماة أعلى ضرر للدب ثم الفرسان، وكل ما زادت رتبة نوع زاد نصيبه. أبقِ شيئاً من المشاة لتحمّل ضربات الدب. الرقم تقديري ومُعاير على نموذج Frakinator — يقرّبك من ضررك الفعلي بالنقاط.",
+        "💡 Archers do the most bear damage, then cavalry; a higher tier on a type raises its share. Keep some infantry to tank the bear's hits. The number is an estimate calibrated to the Frakinator model — close to your real point damage.");
       $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows + '<div class="hint">' + note + '</div>';
     }
 
