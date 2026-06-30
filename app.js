@@ -1949,15 +1949,17 @@
     var OPT = { inf: wInf / wSum, cav: wCav / wSum, arc: wArc / wSum };
 
     inp.innerHTML =
-      '<div class="field"><label>' + tr("حجم الحشد (عدد الجنود)", "March size (troops)") + '</label>' +
+      '<div class="hint" style="text-align:start;margin:0 0 14px;font-size:12px">' + tr("احسب أفضل توزيع لجنودك في صيد الدب 🐻 وقارن قوة ضررك.", "Find your best bear-hunt troop split 🐻 and compare your damage power.") + '</div>' +
+      '<div class="field"><label>' + tr("حجم الحشد (كم جندي تُرسل)", "March size (troops sent)") + '</label>' +
       '<input type="number" min="0" id="bMarch" value="100000"></div>' +
-      '<div class="field"><label>' + tr("رتبة الجنود", "Troop tier") + '</label><select id="bTier">' +
+      '<div class="field"><label>' + tr("رتبتك الأساسية", "Your main tier") + '</label><select id="bTier">' +
       [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(function (n) { return '<option value="' + n + '"' + (n === 10 ? " selected" : "") + '>T' + n + '</option>'; }).join("") +
-      '</select></div>' +
+      '</select><div class="hint" style="text-align:start;margin-top:6px;font-size:11.5px">' + tr("لو رتبك مخلوطة: التشكيلة (النِّسَب) نفسها للكل — اختر رتبتك الأغلب لتقدير الضرر فقط.", "Mixed tiers? The formation % is the same for all — pick your dominant tier just for the damage estimate.") + '</div></div>' +
       '<div class="row2">' +
       '<div class="field"><label>' + tr("نسبة الهجوم %", "Attack bonus %") + '</label><input type="number" min="0" id="bAtk" value="100"></div>' +
       '<div class="field"><label>' + tr("نسبة الفتك %", "Lethality bonus %") + '</label><input type="number" min="0" id="bLeth" value="100"></div>' +
-      '</div>';
+      '</div>' +
+      '<div class="hint" style="text-align:start;margin-top:6px;font-size:11.5px">' + tr("📋 «الهجوم» و«الفتك» تلقاهم في تقرير معركة أي رالي، أو في تفاصيل جنودك (نِسَب مئوية).", "📋 Find Attack & Lethality in any rally's battle report or your troop details (as %).") + '</div>';
 
     function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
     function pct(x) { return Math.round(x * 1000) / 10; }
@@ -1979,13 +1981,13 @@
       var gain = dEven > 0 ? (dOpt / dEven - 1) * 100 : 0;
 
       var rows =
-        statRow("⚔️", tr("عامل القائد (A)", "Leader factor (A)"), "×" + (Math.round(A * 100) / 100), true) +
+        statRow("⚔️", tr("مضاعف الضرر (هجوم×فتك)", "Damage multiplier (atk×leth)"), "×" + (Math.round(A * 100) / 100)) +
         '<div class="stat"><div class="si">🐻</div><div class="sl">' + tr("أفضل تشكيلة", "Best formation") +
         '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(OPT.inf) + '% · 🐎 ' + pct(OPT.cav) + '% · 🏹 ' + pct(OPT.arc) + '%</div></div>' +
         statRow("🛡️", tr("مشاة", "Infantry"), fmt(nInf)) +
         statRow("🐎", tr("فرسان", "Cavalry"), fmt(nCav)) +
         statRow("🏹", tr("رماة", "Archers"), fmt(nArc)) +
-        statRow("💥", tr("مؤشر الضرر التقديري", "Estimated damage index"), fmt(dOpt), true) +
+        statRow("💥", tr("قوة ضررك للدب (للمقارنة)", "Your bear damage power (compare)"), fmt(dOpt), true) +
         statRow("📈", tr("أفضل من التوزيع المتساوي", "Better than even split"), "+" + Math.round(gain) + "%");
 
       var note = tr(
