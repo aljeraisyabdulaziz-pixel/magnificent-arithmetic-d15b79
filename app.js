@@ -1959,10 +1959,10 @@
       TYPES.map(function (T) { return '<div><div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:5px">' + T.ic + " " + tr(T.ar, T.en) + '</div><select id="bT_' + T.k + '">' + tierOpts(T.def) + '</select></div>'; }).join("") +
       '</div></div>' +
       '<div class="row2">' +
-      '<div class="field"><label>' + tr("نسبة الهجوم %", "Attack bonus %") + '</label><input type="number" min="0" id="bAtk" value="100"></div>' +
-      '<div class="field"><label>' + tr("نسبة الفتك %", "Lethality bonus %") + '</label><input type="number" min="0" id="bLeth" value="100"></div>' +
+      '<div class="field"><label>' + tr("مكافأة الهجوم %", "Attack bonus %") + '</label><input type="number" min="0" id="bAtk" value="100"></div>' +
+      '<div class="field"><label>' + tr("مكافأة الفتك %", "Lethality bonus %") + '</label><input type="number" min="0" id="bLeth" value="100"></div>' +
       '</div>' +
-      '<div class="hint" style="text-align:start;margin-top:6px;font-size:11.5px">' + tr("📋 «الهجوم» و«الفتك» تلقاهم في تقرير معركة أي رالي، أو في تفاصيل جنودك (نِسَب مئوية).", "📋 Find Attack & Lethality in any rally's battle report or your troop details (as %).") + '</div>';
+      '<div class="hint" style="text-align:start;margin-top:6px;font-size:11.5px">' + tr("📋 خذ «مكافأة الهجوم» و«مكافأة الفتك» من تقرير معركة رالي سويته بأبطال الدب وعتادك — وكذا يدخل أغلب تأثير الأبطال في الحساب.", "📋 Take Attack & Lethality bonus from a rally battle report done with your bear heroes & gear — that folds in most of the hero effect.") + '</div>';
 
     function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
     function pct(x) { return Math.round(x * 1000) / 10; }
