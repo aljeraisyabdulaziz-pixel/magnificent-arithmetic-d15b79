@@ -1943,18 +1943,21 @@
     var BASE = { inf: 1 / 3, cav: 1, arc: (4 / 3) * 1.1 };
     // تدرّج الهجوم الأساسي حسب الرتبة (تقريبي، ~+22% للرتبة) — يضبط حجم المؤشر فقط
     var TIER_ATT = { 1: 10, 2: 12, 3: 15, 4: 18, 5: 22, 6: 27, 7: 33, 8: 40, 9: 49, 10: 60, 11: 73 };
-    // أفضل نسبة: f ∝ base_att²  (لأن A متساوية للأنواع)
-    var wInf = BASE.inf * BASE.inf, wCav = BASE.cav * BASE.cav, wArc = BASE.arc * BASE.arc;
-    var wSum = wInf + wCav + wArc;
-    var OPT = { inf: wInf / wSum, cav: wCav / wSum, arc: wArc / wSum };
+    // رتبة لكل نوع — قوة النوع الفعّالة = base × tier ، وأفضل نسبة f ∝ القوة²
+    var TYPES = [
+      { k: "inf", ic: "🛡️", ar: "مشاة", en: "Infantry", def: 5 },
+      { k: "cav", ic: "🐎", ar: "فرسان", en: "Cavalry", def: 6 },
+      { k: "arc", ic: "🏹", ar: "رماة", en: "Archers", def: 6 }
+    ];
+    function tierOpts(sel) { return [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(function (n) { return '<option value="' + n + '"' + (n === sel ? " selected" : "") + '>T' + n + '</option>'; }).join(""); }
 
     inp.innerHTML =
-      '<div class="hint" style="text-align:start;margin:0 0 14px;font-size:12px">' + tr("احسب أفضل توزيع لجنودك في صيد الدب 🐻 وقارن قوة ضررك.", "Find your best bear-hunt troop split 🐻 and compare your damage power.") + '</div>' +
+      '<div class="hint" style="text-align:start;margin:0 0 14px;font-size:12px">' + tr("احسب أفضل توزيع لجنودك في صيد الدب 🐻 — حتى لو رتب الأنواع مختلفة.", "Find your best bear-hunt troop split 🐻 — even with different tiers per type.") + '</div>' +
       '<div class="field"><label>' + tr("حجم الحشد (كم جندي تُرسل)", "March size (troops sent)") + '</label>' +
       '<input type="number" min="0" id="bMarch" value="100000"></div>' +
-      '<div class="field"><label>' + tr("رتبتك الأساسية", "Your main tier") + '</label><select id="bTier">' +
-      [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(function (n) { return '<option value="' + n + '"' + (n === 10 ? " selected" : "") + '>T' + n + '</option>'; }).join("") +
-      '</select><div class="hint" style="text-align:start;margin-top:6px;font-size:11.5px">' + tr("لو رتبك مخلوطة: التشكيلة (النِّسَب) نفسها للكل — اختر رتبتك الأغلب لتقدير الضرر فقط.", "Mixed tiers? The formation % is the same for all — pick your dominant tier just for the damage estimate.") + '</div></div>' +
+      '<div class="field"><label>' + tr("رتبة كل نوع", "Tier of each type") + '</label><div class="row3">' +
+      TYPES.map(function (T) { return '<div><div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:5px">' + T.ic + " " + tr(T.ar, T.en) + '</div><select id="bT_' + T.k + '">' + tierOpts(T.def) + '</select></div>'; }).join("") +
+      '</div></div>' +
       '<div class="row2">' +
       '<div class="field"><label>' + tr("نسبة الهجوم %", "Attack bonus %") + '</label><input type="number" min="0" id="bAtk" value="100"></div>' +
       '<div class="field"><label>' + tr("نسبة الفتك %", "Lethality bonus %") + '</label><input type="number" min="0" id="bLeth" value="100"></div>' +
@@ -1966,15 +1969,17 @@
 
     function compute() {
       var march = Math.max(0, parseInt($("bMarch").value, 10) || 0);
-      var tier = parseInt($("bTier").value, 10) || 10;
       var atk = Math.max(0, parseFloat($("bAtk").value) || 0);
       var leth = Math.max(0, parseFloat($("bLeth").value) || 0);
       var A = (1 + atk / 100) * (1 + leth / 100);
-      var tAtt = TIER_ATT[tier] || 60;
-
-      var nInf = Math.round(march * OPT.inf), nCav = Math.round(march * OPT.cav), nArc = march - nInf - nCav;
+      var eff = {};
+      TYPES.forEach(function (T) { var ti = parseInt($("bT_" + T.k).value, 10) || T.def; eff[T.k] = BASE[T.k] * (TIER_ATT[ti] || 27); });
+      var w = { inf: eff.inf * eff.inf, cav: eff.cav * eff.cav, arc: eff.arc * eff.arc };
+      var ws = w.inf + w.cav + w.arc || 1;
+      var f = { inf: w.inf / ws, cav: w.cav / ws, arc: w.arc / ws };
+      var nInf = Math.round(march * f.inf), nCav = Math.round(march * f.cav), nArc = Math.max(0, march - nInf - nCav);
       function dmg(ni, nc, na) {
-        return CONST * A * (Math.sqrt(ni) * BASE.inf * tAtt + Math.sqrt(nc) * BASE.cav * tAtt + Math.sqrt(na) * BASE.arc * tAtt);
+        return CONST * A * (Math.sqrt(Math.max(0, ni)) * eff.inf + Math.sqrt(Math.max(0, nc)) * eff.cav + Math.sqrt(Math.max(0, na)) * eff.arc);
       }
       var dOpt = dmg(nInf, nCav, nArc);
       var e = Math.round(march / 3), dEven = dmg(e, e, march - 2 * e);
@@ -1983,7 +1988,7 @@
       var rows =
         statRow("⚔️", tr("مضاعف الضرر (هجوم×فتك)", "Damage multiplier (atk×leth)"), "×" + (Math.round(A * 100) / 100)) +
         '<div class="stat"><div class="si">🐻</div><div class="sl">' + tr("أفضل تشكيلة", "Best formation") +
-        '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(OPT.inf) + '% · 🐎 ' + pct(OPT.cav) + '% · 🏹 ' + pct(OPT.arc) + '%</div></div>' +
+        '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(f.inf) + '% · 🐎 ' + pct(f.cav) + '% · 🏹 ' + pct(f.arc) + '%</div></div>' +
         statRow("🛡️", tr("مشاة", "Infantry"), fmt(nInf)) +
         statRow("🐎", tr("فرسان", "Cavalry"), fmt(nCav)) +
         statRow("🏹", tr("رماة", "Archers"), fmt(nArc)) +
@@ -1991,12 +1996,12 @@
         statRow("📈", tr("أفضل من التوزيع المتساوي", "Better than even split"), "+" + Math.round(gain) + "%");
 
       var note = tr(
-        "💡 الرماة أعلى ضرر للدب ثم الفرسان. أبقِ شيئاً من المشاة لتحمّل الضربات. أبطال مثل Alcar / Margot / Rosa يرفعون الضرر ويغيّرون النسبة. «مؤشر الضرر» للمقارنة بين الإعدادات — ليس رقم اللعبة الحرفي.",
-        "💡 Archers do the most bear damage, then cavalry. Keep some infantry to tank. Heroes like Alcar / Margot / Rosa raise damage and shift the ratio. The damage index is for comparing setups — not the literal in-game number.");
+        "💡 الرماة أعلى ضرر للدب ثم الفرسان، وكل ما زادت رتبة نوع زاد نصيبه في التشكيلة. أبقِ شيئاً من المشاة لتحمّل ضربات الدب. «قوة الضرر» للمقارنة بين إعداداتك — ليس رقم اللعبة الحرفي.",
+        "💡 Archers do the most bear damage, then cavalry; a higher tier on a type raises its share. Keep some infantry to tank the bear's hits. The damage power is for comparing setups — not the literal in-game number.");
       $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows + '<div class="hint">' + note + '</div>';
     }
 
-    ["bMarch", "bTier", "bAtk", "bLeth"].forEach(function (id) { $(id).addEventListener("input", compute); $(id).addEventListener("change", compute); });
+    ["bMarch", "bAtk", "bLeth", "bT_inf", "bT_cav", "bT_arc"].forEach(function (id) { $(id).addEventListener("input", compute); $(id).addEventListener("change", compute); });
     compute();
   }
 
