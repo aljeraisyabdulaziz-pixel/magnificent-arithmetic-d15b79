@@ -133,7 +133,8 @@
         pets:        ["الحيوانات الأليفة","احسب تكلفة ترقية حيوانك الأليف: الطعام والكتيبات والجرعات."],
         battle:      ["حاسبة القتال","توصية تشكيل القوات حسب نمط المعركة."],
         equip:       ["حاسبة العتاد","مثريل + تطوير + إتقان عتاد الأبطال الأسطوري."],
-        lineups:     ["أفضل التشكيلات","أقوى تشكيلات أبطال الجيل الأول (Gen1)."]
+        lineups:     ["أفضل التشكيلات","أقوى تشكيلات أبطال الجيل الأول (Gen1)."],
+        bear:        ["حاسبة الدب","أفضل تشكيلة لصيد الدب + تقدير الضرر 🐻."]
       }
     },
     en: {
@@ -171,7 +172,8 @@
         pets:        ["Pets","Calculate pet upgrade cost: food, manuals & potions."],
         battle:      ["Battle Calculator","Troop formation recommendation by combat mode."],
         equip:       ["Equipment Calculator","Mithril + Enhancement + Mastery for mythic hero gear."],
-        lineups:     ["Best Lineups","Strongest Gen1 hero lineups."]
+        lineups:     ["Best Lineups","Strongest Gen1 hero lineups."],
+        bear:        ["Bear Calculator","Best bear-hunt formation + damage estimate 🐻."]
       }
     },
     zh: {
@@ -209,7 +211,8 @@
         pets:        ["宠物","计算宠物升级所需食物、手册和药水。"],
         battle:      ["战斗计算器","根据战斗模式推荐部队编成。"],
         equip:       ["装备计算器","秘银 + 强化 + 精通 神话英雄装备。"],
-        lineups:     ["最佳阵容","最强的第一代 (Gen1) 英雄阵容。"]
+        lineups:     ["最佳阵容","最强的第一代 (Gen1) 英雄阵容。"],
+        bear:        ["猎熊计算器","最佳猎熊阵容 + 伤害估算 🐻。"]
       }
     },
     ko: {
@@ -247,7 +250,8 @@
         pets:        ["펫","펫 업그레이드 비용: 음식·매뉴얼·물약 계산."],
         battle:      ["전투 계산기","전투 모드별 부대 편성 추천."],
         equip:       ["장비 계산기","미스릴 + 강화 + 숙련 신화 영웅 장비."],
-        lineups:     ["최고의 조합","가장 강력한 1세대 (Gen1) 영웅 조합."]
+        lineups:     ["최고의 조합","가장 강력한 1세대 (Gen1) 영웅 조합."],
+        bear:        ["곰 사냥 계산기","최적 곰 사냥 편성 + 피해 추정 🐻."]
       }
     },
     es: {
@@ -285,7 +289,8 @@
         pets:        ["Mascotas","Calcula el costo de mejora de mascota: comida, manuales y pociones."],
         battle:      ["Calculadora de Batalla","Recomendación de formación de tropas por modo de combate."],
         equip:       ["Calculadora de Equipo","Mithril + Mejora + Maestría del equipo mítico de héroes."],
-        lineups:     ["Mejores Alineaciones","Las alineaciones de héroes Gen1 más fuertes."]
+        lineups:     ["Mejores Alineaciones","Las alineaciones de héroes Gen1 más fuertes."],
+        bear:        ["Calculadora del Oso","Mejor formación de caza + daño estimado 🐻."]
       }
     }
   };
@@ -307,6 +312,7 @@
     { id:"shards",       group:"free", icon:"💠", active:true              },
     { id:"compare",      group:"free", icon:"📊", active:true              },
     { id:"pets",         group:"free", icon:"🐾", active:true, new:true   },
+    { id:"bear",         group:"free", icon:"🐻", active:true, new:true   },
     { id:"battle",       group:"free", icon:"🎯", active:true, new:true   },
     { id:"equip",        group:"free", icon:"⚒️", active:true, new:true   },
     { id:"lineups",      group:"free", icon:"🏅", active:true, new:true   }
@@ -457,6 +463,7 @@
     if (id === "truegold")    return calcTruegold();
     if (id === "pets")        return calcPets();
     if (id === "battle")      return calcBattle();
+    if (id === "bear")        return calcBear();
     if (id === "equip")       return calcEquip();
     if (id === "lineups")     return calcLineups();
   }
@@ -1921,6 +1928,74 @@
     window._petQT  = function(l) { var el = $("ptT"); if (el) { el.value = l; compute(); } };
 
     build();
+  }
+
+  /* === حاسبة الدب — أفضل تشكيلة + تقدير الضرر (نموذج موثّق من Theory-craft) === */
+  function calcBear() {
+    var L = t(), inp = $("calcInputs");
+    var isAr = lang === "ar";
+    function tr(a, e) { return isAr ? a : e; }
+
+    // نموذج الضرر: لكل نوع  D = (1.2/1000)·√5000 · √(عدد الجنود) · base_att · A
+    // A = (1+الهجوم/100)·(1+الفتك/100)  (نفس القيمة لكل الأنواع)
+    // نسبة base_att بين الأنواع: مشاة ⅓ : فرسان 1 : رماة 4/3×1.1
+    var CONST = (1.2 / 1000) * Math.sqrt(5000);          // ≈ 0.08485
+    var BASE = { inf: 1 / 3, cav: 1, arc: (4 / 3) * 1.1 };
+    // تدرّج الهجوم الأساسي حسب الرتبة (تقريبي، ~+22% للرتبة) — يضبط حجم المؤشر فقط
+    var TIER_ATT = { 1: 10, 2: 12, 3: 15, 4: 18, 5: 22, 6: 27, 7: 33, 8: 40, 9: 49, 10: 60, 11: 73 };
+    // أفضل نسبة: f ∝ base_att²  (لأن A متساوية للأنواع)
+    var wInf = BASE.inf * BASE.inf, wCav = BASE.cav * BASE.cav, wArc = BASE.arc * BASE.arc;
+    var wSum = wInf + wCav + wArc;
+    var OPT = { inf: wInf / wSum, cav: wCav / wSum, arc: wArc / wSum };
+
+    inp.innerHTML =
+      '<div class="field"><label>' + tr("حجم الحشد (عدد الجنود)", "March size (troops)") + '</label>' +
+      '<input type="number" min="0" id="bMarch" value="100000"></div>' +
+      '<div class="field"><label>' + tr("رتبة الجنود", "Troop tier") + '</label><select id="bTier">' +
+      [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(function (n) { return '<option value="' + n + '"' + (n === 10 ? " selected" : "") + '>T' + n + '</option>'; }).join("") +
+      '</select></div>' +
+      '<div class="row2">' +
+      '<div class="field"><label>' + tr("نسبة الهجوم %", "Attack bonus %") + '</label><input type="number" min="0" id="bAtk" value="100"></div>' +
+      '<div class="field"><label>' + tr("نسبة الفتك %", "Lethality bonus %") + '</label><input type="number" min="0" id="bLeth" value="100"></div>' +
+      '</div>';
+
+    function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
+    function pct(x) { return Math.round(x * 1000) / 10; }
+
+    function compute() {
+      var march = Math.max(0, parseInt($("bMarch").value, 10) || 0);
+      var tier = parseInt($("bTier").value, 10) || 10;
+      var atk = Math.max(0, parseFloat($("bAtk").value) || 0);
+      var leth = Math.max(0, parseFloat($("bLeth").value) || 0);
+      var A = (1 + atk / 100) * (1 + leth / 100);
+      var tAtt = TIER_ATT[tier] || 60;
+
+      var nInf = Math.round(march * OPT.inf), nCav = Math.round(march * OPT.cav), nArc = march - nInf - nCav;
+      function dmg(ni, nc, na) {
+        return CONST * A * (Math.sqrt(ni) * BASE.inf * tAtt + Math.sqrt(nc) * BASE.cav * tAtt + Math.sqrt(na) * BASE.arc * tAtt);
+      }
+      var dOpt = dmg(nInf, nCav, nArc);
+      var e = Math.round(march / 3), dEven = dmg(e, e, march - 2 * e);
+      var gain = dEven > 0 ? (dOpt / dEven - 1) * 100 : 0;
+
+      var rows =
+        statRow("⚔️", tr("عامل القائد (A)", "Leader factor (A)"), "×" + (Math.round(A * 100) / 100), true) +
+        '<div class="stat"><div class="si">🐻</div><div class="sl">' + tr("أفضل تشكيلة", "Best formation") +
+        '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(OPT.inf) + '% · 🐎 ' + pct(OPT.cav) + '% · 🏹 ' + pct(OPT.arc) + '%</div></div>' +
+        statRow("🛡️", tr("مشاة", "Infantry"), fmt(nInf)) +
+        statRow("🐎", tr("فرسان", "Cavalry"), fmt(nCav)) +
+        statRow("🏹", tr("رماة", "Archers"), fmt(nArc)) +
+        statRow("💥", tr("مؤشر الضرر التقديري", "Estimated damage index"), fmt(dOpt), true) +
+        statRow("📈", tr("أفضل من التوزيع المتساوي", "Better than even split"), "+" + Math.round(gain) + "%");
+
+      var note = tr(
+        "💡 الرماة أعلى ضرر للدب ثم الفرسان. أبقِ شيئاً من المشاة لتحمّل الضربات. أبطال مثل Alcar / Margot / Rosa يرفعون الضرر ويغيّرون النسبة. «مؤشر الضرر» للمقارنة بين الإعدادات — ليس رقم اللعبة الحرفي.",
+        "💡 Archers do the most bear damage, then cavalry. Keep some infantry to tank. Heroes like Alcar / Margot / Rosa raise damage and shift the ratio. The damage index is for comparing setups — not the literal in-game number.");
+      $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows + '<div class="hint">' + note + '</div>';
+    }
+
+    ["bMarch", "bTier", "bAtk", "bLeth"].forEach(function (id) { $(id).addEventListener("input", compute); $(id).addEventListener("change", compute); });
+    compute();
   }
 
   /* === حاسبة القتال — توصية التشكيل === */
