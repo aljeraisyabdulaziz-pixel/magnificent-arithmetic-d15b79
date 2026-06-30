@@ -1936,74 +1936,73 @@
     var isAr = lang === "ar";
     function tr(a, e) { return isAr ? a : e; }
 
-    // نموذج الضرر: لكل نوع  D = (1.2/1000)·√5000 · √(عدد الجنود) · base_att · A
-    // A = (1+الهجوم/100)·(1+الفتك/100)  (نفس القيمة لكل الأنواع)
-    // نسبة base_att بين الأنواع: مشاة ⅓ : فرسان 1 : رماة 4/3×1.1
-    var CONST = (1.2 / 1000) * Math.sqrt(5000);          // ≈ 0.08485
-    var SCALE = 100;  // معايرة على ناتج Frakinator الحقيقي: 150k T10 @400/400 ≈ 7.97 مليون نقطة
+    // نموذج Frakinator: لكل نوع  D = SCALE·(1.2/1000)·√5000 · √(عدد الجنود) · base_att(الرتبة) · A
+    // A = (1+مكافأة الهجوم/100)·(1+مكافأة الفتك/100) — تُحسب لكل نوع على حدة (وتشمل أثر بطله)
+    var CONST = (1.2 / 1000) * Math.sqrt(5000);
+    var SCALE = 100;  // معايرة على Frakinator: الناتج ≈ نقاط حقيقية
     var BASE = { inf: 1 / 3, cav: 1, arc: (4 / 3) * 1.1 };
-    // تدرّج الهجوم الأساسي حسب الرتبة (تقريبي، ~+22% للرتبة) — يضبط حجم المؤشر فقط
     var TIER_ATT = { 1: 10, 2: 12, 3: 15, 4: 18, 5: 22, 6: 27, 7: 33, 8: 40, 9: 49, 10: 60, 11: 73 };
-    // رتبة لكل نوع — قوة النوع الفعّالة = base × tier ، وأفضل نسبة f ∝ القوة²
     var TYPES = [
-      { k: "inf", ic: "🛡️", ar: "مشاة", en: "Infantry", def: 5 },
-      { k: "cav", ic: "🐎", ar: "فرسان", en: "Cavalry", def: 6 },
-      { k: "arc", ic: "🏹", ar: "رماة", en: "Archers", def: 6 }
+      { k: "inf", ic: "🛡️", ar: "مشاة", en: "Infantry", n: 30000, ti: 10 },
+      { k: "cav", ic: "🐎", ar: "فرسان", en: "Cavalry", n: 60000, ti: 10 },
+      { k: "arc", ic: "🏹", ar: "رماة", en: "Archers", n: 60000, ti: 10 }
     ];
     function tierOpts(sel) { return [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(function (n) { return '<option value="' + n + '"' + (n === sel ? " selected" : "") + '>T' + n + '</option>'; }).join(""); }
 
     inp.innerHTML =
-      '<div class="hint" style="text-align:start;margin:0 0 14px;font-size:12px">' + tr("احسب أفضل توزيع لجنودك في صيد الدب 🐻 — حتى لو رتب الأنواع مختلفة.", "Find your best bear-hunt troop split 🐻 — even with different tiers per type.") + '</div>' +
-      '<div class="field"><label>' + tr("حجم الحشد (كم جندي تُرسل)", "March size (troops sent)") + '</label>' +
-      '<input type="number" min="0" id="bMarch" value="100000"></div>' +
-      '<div class="field"><label>' + tr("رتبة كل نوع", "Tier of each type") + '</label><div class="row3">' +
-      TYPES.map(function (T) { return '<div><div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:5px">' + T.ic + " " + tr(T.ar, T.en) + '</div><select id="bT_' + T.k + '">' + tierOpts(T.def) + '</select></div>'; }).join("") +
-      '</div></div>' +
-      '<div class="row2">' +
-      '<div class="field"><label>' + tr("مكافأة الهجوم %", "Attack bonus %") + '</label><input type="number" min="0" id="bAtk" value="100"></div>' +
-      '<div class="field"><label>' + tr("مكافأة الفتك %", "Lethality bonus %") + '</label><input type="number" min="0" id="bLeth" value="100"></div>' +
-      '</div>' +
-      '<div class="hint" style="text-align:start;margin-top:6px;font-size:11.5px">' + tr("📋 خذ «مكافأة الهجوم» و«مكافأة الفتك» من تقرير معركة رالي سويته بأبطال الدب وعتادك — وكذا يدخل أغلب تأثير الأبطال في الحساب.", "📋 Take Attack & Lethality bonus from a rally battle report done with your bear heroes & gear — that folds in most of the hero effect.") + '</div>';
+      '<div class="hint" style="text-align:start;margin:0 0 12px;font-size:12px">' + tr("أدخل جنودك ومكافآتك لكل نوع (من تقرير معركة رالي بأبطالك) — يطلع ضررك الحقيقي + أفضل تشكيلة. 🐻", "Enter your troops & bonuses per type (from a rally battle report with your heroes) — get your real damage + best formation. 🐻") + '</div>' +
+      TYPES.map(function (T) {
+        return '<div class="panel" style="margin-bottom:10px;padding:14px"><div class="panel-title" style="margin:0 0 10px">' + T.ic + " " + tr(T.ar, T.en) + '</div>' +
+          '<div class="field" style="margin-bottom:10px"><label>' + tr("عدد الجنود", "Troops") + '</label><input type="number" min="0" id="bN_' + T.k + '" value="' + T.n + '"></div>' +
+          '<div class="row3">' +
+          '<div><label style="font-size:11px">' + tr("هجوم %", "Attack %") + '</label><input type="number" min="0" id="bA_' + T.k + '" value="200"></div>' +
+          '<div><label style="font-size:11px">' + tr("فتك %", "Lethality %") + '</label><input type="number" min="0" id="bL_' + T.k + '" value="200"></div>' +
+          '<div><label style="font-size:11px">' + tr("الرتبة", "Tier") + '</label><select id="bT_' + T.k + '">' + tierOpts(T.ti) + '</select></div>' +
+          '</div></div>';
+      }).join("");
 
     function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
     function pct(x) { return Math.round(x * 1000) / 10; }
     function fmtDmg(p) { return p >= 1e6 ? (p / 1e6).toFixed(2) + tr(" مليون", "M") : p >= 1e3 ? (p / 1e3).toFixed(0) + tr(" ألف", "K") : fmt(p); }
 
     function compute() {
-      var march = Math.max(0, parseInt($("bMarch").value, 10) || 0);
-      var atk = Math.max(0, parseFloat($("bAtk").value) || 0);
-      var leth = Math.max(0, parseFloat($("bLeth").value) || 0);
-      var A = (1 + atk / 100) * (1 + leth / 100);
-      var eff = {};
-      TYPES.forEach(function (T) { var ti = parseInt($("bT_" + T.k).value, 10) || T.def; eff[T.k] = BASE[T.k] * (TIER_ATT[ti] || 27); });
-      var w = { inf: eff.inf * eff.inf, cav: eff.cav * eff.cav, arc: eff.arc * eff.arc };
-      var ws = w.inf + w.cav + w.arc || 1;
-      var f = { inf: w.inf / ws, cav: w.cav / ws, arc: w.arc / ws };
-      var nInf = Math.round(march * f.inf), nCav = Math.round(march * f.cav), nArc = Math.max(0, march - nInf - nCav);
-      function dmg(ni, nc, na) {
-        return SCALE * CONST * A * (Math.sqrt(Math.max(0, ni)) * eff.inf + Math.sqrt(Math.max(0, nc)) * eff.cav + Math.sqrt(Math.max(0, na)) * eff.arc);
-      }
-      var dOpt = dmg(nInf, nCav, nArc);
-      var e = Math.round(march / 3), dEven = dmg(e, e, march - 2 * e);
-      var gain = dEven > 0 ? (dOpt / dEven - 1) * 100 : 0;
+      var D = {}, totalN = 0;
+      TYPES.forEach(function (ty) {
+        var n = Math.max(0, parseInt($("bN_" + ty.k).value, 10) || 0);
+        var a = Math.max(0, parseFloat($("bA_" + ty.k).value) || 0);
+        var l = Math.max(0, parseFloat($("bL_" + ty.k).value) || 0);
+        var ti = parseInt($("bT_" + ty.k).value, 10) || 10;
+        D[ty.k] = { n: n, power: BASE[ty.k] * (TIER_ATT[ti] || 60) * (1 + a / 100) * (1 + l / 100) };
+        totalN += n;
+      });
+      function dmgOf(n, power) { return SCALE * CONST * Math.sqrt(Math.max(0, n)) * power; }
+      var dCur = dmgOf(D.inf.n, D.inf.power) + dmgOf(D.cav.n, D.cav.power) + dmgOf(D.arc.n, D.arc.power);
+
+      var ws = D.inf.power * D.inf.power + D.cav.power * D.cav.power + D.arc.power * D.arc.power || 1;
+      var fInf = D.inf.power * D.inf.power / ws, fCav = D.cav.power * D.cav.power / ws, fArc = D.arc.power * D.arc.power / ws;
+      var oInf = Math.round(totalN * fInf), oCav = Math.round(totalN * fCav), oArc = Math.max(0, totalN - oInf - oCav);
+      var dOpt = dmgOf(oInf, D.inf.power) + dmgOf(oCav, D.cav.power) + dmgOf(oArc, D.arc.power);
+      var gain = dCur > 0 ? (dOpt / dCur - 1) * 100 : 0;
 
       var rows =
-        statRow("⚔️", tr("مضاعف الضرر (هجوم×فتك)", "Damage multiplier (atk×leth)"), "×" + (Math.round(A * 100) / 100)) +
-        '<div class="stat"><div class="si">🐻</div><div class="sl">' + tr("أفضل تشكيلة", "Best formation") +
-        '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(f.inf) + '% · 🐎 ' + pct(f.cav) + '% · 🏹 ' + pct(f.arc) + '%</div></div>' +
-        statRow("🛡️", tr("مشاة", "Infantry"), fmt(nInf)) +
-        statRow("🐎", tr("فرسان", "Cavalry"), fmt(nCav)) +
-        statRow("🏹", tr("رماة", "Archers"), fmt(nArc)) +
-        statRow("💥", tr("الضرر التقديري للدب", "Estimated bear damage"), fmtDmg(dOpt) + tr(" نقطة", " pts"), true) +
-        statRow("📈", tr("أفضل من التوزيع المتساوي", "Better than even split"), "+" + Math.round(gain) + "%");
+        statRow("💥", tr("ضررك الحالي", "Your current damage"), fmtDmg(dCur) + tr(" نقطة", " pts"), true) +
+        '<div class="stat total"><div class="si">🐻</div><div class="sl">' + tr("أفضل تشكيلة (نفس العدد)", "Best split (same total)") +
+        '</div><div class="sv" dir="ltr" style="font-size:13px">🛡️ ' + pct(fInf) + '% · 🐎 ' + pct(fCav) + '% · 🏹 ' + pct(fArc) + '%</div></div>' +
+        statRow("🛡️", tr("مشاة", "Infantry"), fmt(oInf)) +
+        statRow("🐎", tr("فرسان", "Cavalry"), fmt(oCav)) +
+        statRow("🏹", tr("رماة", "Archers"), fmt(oArc)) +
+        statRow("💥", tr("ضرر أفضل تشكيلة", "Best-split damage"), fmtDmg(dOpt) + tr(" نقطة", " pts"), true) +
+        (gain > 0.5 ? statRow("📈", tr("الزيادة لو رتّبت التشكيلة", "Gain if you rebalance"), "+" + Math.round(gain) + "%") : "");
 
       var note = tr(
-        "💡 الرماة أعلى ضرر للدب ثم الفرسان، وكل ما زادت رتبة نوع زاد نصيبه. أبقِ شيئاً من المشاة لتحمّل ضربات الدب. الرقم تقديري ومُعاير على نموذج Frakinator — يقرّبك من ضررك الفعلي بالنقاط.",
-        "💡 Archers do the most bear damage, then cavalry; a higher tier on a type raises its share. Keep some infantry to tank the bear's hits. The number is an estimate calibrated to the Frakinator model — close to your real point damage.");
+        "💡 أدخل المكافآت لكل نوع من تقرير معركتك — وكذا يدخل أثر أبطالك تلقائياً. الرماة أعلى ضرر ثم الفرسان؛ أبقِ مشاة لتحمّل ضربات الدب. الأرقام تقديرية ومُعايرة على نموذج Frakinator.",
+        "💡 Enter per-type bonuses from your battle report — that includes your heroes automatically. Archers hit hardest, then cavalry; keep infantry to tank. Numbers are estimates calibrated to the Frakinator model.");
       $("calcResults").innerHTML = "<h4>" + L.results + "</h4>" + rows + '<div class="hint">' + note + '</div>';
     }
 
-    ["bMarch", "bAtk", "bLeth", "bT_inf", "bT_cav", "bT_arc"].forEach(function (id) { $(id).addEventListener("input", compute); $(id).addEventListener("change", compute); });
+    var ids = [];
+    TYPES.forEach(function (ty) { ids.push("bN_" + ty.k, "bA_" + ty.k, "bL_" + ty.k, "bT_" + ty.k); });
+    ids.forEach(function (id) { $(id).addEventListener("input", compute); $(id).addEventListener("change", compute); });
     compute();
   }
 

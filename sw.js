@@ -1,5 +1,5 @@
 /* service worker — تخزين مؤقت للعمل بدون إنترنت */
-var CACHE = "ks-calc-v44";
+var CACHE = "ks-calc-v45";
 var ASSETS = [
   "./", "./index.html", "./privacy.html", "./app.js", "./data.js", "./data2.js", "./data3.js", "./data4.js", "./data5.js", "./styles.css",
   "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"
